@@ -1,0 +1,276 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Design Tokens — Ink / Manga palette ───────────────
+   Black & white comic-panel base with a single "hanko stamp"
+   red accent, used the way manga covers use a single spot color. */
+:root {
+  /* Colors */
+  --color-brand-bg: #08090b;
+  --color-brand-bg-rgb: 8 9 11;
+  --color-brand-text: #f7f7f5;
+  --color-brand-muted: #9a9a96;
+  --color-brand-primary: #ff3b30;
+  --color-brand-secondary: #ffffff;
+  --color-brand-panel: rgba(255, 255, 255, 0.05);
+  --color-brand-border: rgba(255, 255, 255, 0.14);
+  --color-ink-line: rgba(247, 247, 245, 0.9);
+
+  --color-surface-1: rgba(20, 20, 22, 0.6);
+  --color-surface-2: rgba(20, 20, 22, 0.85);
+  --color-surface-3: rgba(8, 9, 11, 0.96);
+
+  --color-border-subtle: rgba(247, 247, 245, 0.12);
+  --color-border-strong: rgba(247, 247, 245, 0.28);
+  --color-input-bg: rgba(8, 9, 11, 0.5);
+  --color-input-border: rgba(247, 247, 245, 0.22);
+  --color-chip-bg: rgba(247, 247, 245, 0.06);
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+}
+
+[data-theme="light"] {
+  --color-brand-bg: #f8f8f6;
+  --color-brand-bg-rgb: 248 248 246;
+  --color-brand-text: #0a0a0a;
+  --color-brand-muted: #5c5c58;
+  --color-brand-primary: #e0291f;
+  --color-brand-secondary: #0a0a0a;
+  --color-brand-panel: rgba(10, 10, 10, 0.04);
+  --color-brand-border: rgba(10, 10, 10, 0.14);
+  --color-ink-line: rgba(10, 10, 10, 0.92);
+
+  --color-surface-1: rgba(255, 255, 255, 0.75);
+  --color-surface-2: rgba(255, 255, 255, 0.92);
+  --color-surface-3: rgba(255, 255, 255, 0.98);
+
+  --color-border-subtle: rgba(10, 10, 10, 0.12);
+  --color-border-strong: rgba(10, 10, 10, 0.22);
+  --color-input-bg: rgba(255, 255, 255, 0.88);
+  --color-input-border: rgba(10, 10, 10, 0.2);
+  --color-chip-bg: rgba(10, 10, 10, 0.05);
+}
+
+/* ─── Base ──────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    color-scheme: dark;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  [data-theme="light"] {
+    color-scheme: light;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background-color: var(--color-brand-bg);
+    color: var(--color-brand-text);
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02", "rlig" 1, "calt" 1;
+    transition: background-color 0.35s ease, color 0.35s ease;
+    line-height: 1.6;
+  }
+
+  ::selection {
+    background: rgba(34, 211, 238, 0.25);
+    color: var(--color-brand-text);
+  }
+}
+
+/* ─── Utilities ──────────────────────────────────────── */
+@layer utilities {
+  /* Text */
+  .text-muted {
+    color: var(--color-brand-muted);
+  }
+
+  .text-glow {
+    text-shadow: 0 0 24px rgba(34, 211, 238, 0.45);
+  }
+
+  /* Surfaces */
+  .bg-surface {
+    background-color: var(--color-surface-1);
+  }
+
+  .bg-surface-strong {
+    background-color: var(--color-surface-2);
+  }
+
+  .bg-surface-solid {
+    background-color: var(--color-surface-3);
+  }
+
+  /* Borders */
+  .border-subtle {
+    border-color: var(--color-border-subtle);
+  }
+
+  .border-strong {
+    border-color: var(--color-border-strong);
+  }
+
+  /* Glass */
+  .glass-panel {
+    background-color: var(--color-brand-panel);
+    border: 1px solid var(--color-brand-border);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 16px;
+  }
+
+  /* Hero overlay (gradient fade left → right) */
+  .hero-overlay {
+    background: linear-gradient(
+      to right,
+      rgb(var(--color-brand-bg-rgb) / 0.88) 25%,
+      rgb(var(--color-brand-bg-rgb) / 0) 70%
+    );
+  }
+
+  /* Site header */
+  .site-header {
+    background-color: rgb(var(--color-brand-bg-rgb) / 0.80);
+    border-bottom: 1px solid var(--color-brand-border);
+  }
+
+  /* Site footer */
+  .site-footer {
+    background-color: var(--color-brand-bg);
+  }
+
+  /* Contact section */
+  .contact-surface {
+    background: linear-gradient(135deg, var(--color-surface-2), var(--color-surface-3));
+    border: 1px solid var(--color-border-subtle);
+  }
+
+  /* Inputs */
+  .input-surface {
+    background-color: var(--color-input-bg);
+    border-color: var(--color-input-border);
+    color: var(--color-brand-text);
+  }
+
+  /* Chips / tags */
+  .chip-surface {
+    background-color: var(--color-chip-bg);
+    border: 1px solid var(--color-border-subtle);
+    color: var(--color-brand-muted);
+  }
+
+  /* Animations */
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Gradient text utility — manga "hanko stamp" red on ink */
+  .gradient-text {
+    background: linear-gradient(100deg, var(--color-brand-primary) 0%, #ff8a65 55%, var(--color-brand-primary) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Glow effect */
+  .glow-cyan {
+    box-shadow: 0 0 30px rgba(255, 59, 48, 0.18);
+  }
+
+  /* ─── Comic / manga panel system ─────────────────────── */
+  .ink-panel {
+    background-color: var(--color-surface-1);
+    border: 2px solid var(--color-ink-line);
+    border-radius: var(--radius-lg);
+    box-shadow: 6px 6px 0 0 var(--color-ink-line);
+  }
+
+  .ink-panel-hover {
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+  }
+  .ink-panel-hover:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 0 var(--color-ink-line);
+  }
+
+  .halftone-bg {
+    background-image: radial-gradient(var(--color-ink-line) 1px, transparent 1.4px);
+    background-size: 14px 14px;
+    opacity: 0.06;
+  }
+
+  .speech-bubble {
+    position: relative;
+    background: var(--color-brand-text);
+    color: var(--color-brand-bg);
+    border-radius: 18px;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+  }
+  .speech-bubble::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 24px;
+    border-width: 8px 8px 0 0;
+    border-style: solid;
+    border-color: var(--color-brand-text) transparent transparent transparent;
+  }
+
+  .stamp-accent {
+    color: var(--color-brand-primary);
+  }
+
+  .wobble-hover {
+    transition: transform 0.2s ease;
+  }
+  .wobble-hover:hover {
+    transform: rotate(-2deg) scale(1.05);
+  }
+}
+
+/* ─── Keyframes ──────────────────────────────────────── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.3); }
+  50%       { box-shadow: 0 0 0 8px rgba(34, 211, 238, 0); }
+}
+
+/* ─── Scrollbar ──────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.35);
+}

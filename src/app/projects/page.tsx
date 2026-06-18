@@ -1,96 +1,148 @@
-import type { Metadata } from "next";
+"use client";
+
 import Link from "next/link";
-import { ProjectCard } from "@/components/ProjectCard";
-import { Section } from "@/components/Section";
-import { projects, siteConfig } from "@/data/site";
-import { cn } from "@/lib/utils";
+import { PORTFOLIO_DATA } from "@/data/portfolio";
+import { motion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: `Projects · ${siteConfig.name}`,
-  description:
-    "Explore case studies that showcase shipping performant web apps, ML-powered mobile products, and research platforms with measurable outcomes.",
-};
-
-type ProjectsPageProps = {
-  searchParams?: {
-    domain?: string;
-  };
-};
-
-export default function ProjectsPage({ searchParams }: ProjectsPageProps) {
-  const domain = searchParams?.domain ?? "all";
-  const domains = Array.from(new Set(projects.map((project) => project.domain)));
-
-  const filteredProjects =
-    domain === "all"
-      ? projects
-      : projects.filter(
-          (project) => project.domain.toLowerCase() === domain.toLowerCase(),
-        );
-
-  return (
-    <Section
-      eyebrow="Projects"
-      title="Case studies built for technical screens"
-      description="Filter by domain to move from headline metrics to implementation detail. Every project includes architecture decisions, KPIs, and source links."
-    >
-      <ProjectsFilters domains={domains} active={domain} />
-      <div className="mt-10 grid gap-6 lg:grid-cols-3">
-        {filteredProjects.map((project) => (
-          <ProjectCard key={project.slug} project={project} />
-        ))}
-      </div>
-    </Section>
-  );
-}
-
-function ProjectsFilters({
-  domains,
-  active,
-}: {
-  domains: string[];
-  active: string;
-}) {
-  return (
-    <div className="flex flex-wrap items-center gap-3">
-      <FilterPill href="/projects" active={active === "all"}>
-        All
-      </FilterPill>
-      {domains.map((domain) => (
-        <FilterPill
-          key={domain}
-          href={`/projects?domain=${encodeURIComponent(domain)}`}
-          active={active.toLowerCase() === domain.toLowerCase()}
+function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.7, delay, ease: "easeOut" }}
+            className={className}
         >
-          {domain}
-        </FilterPill>
-      ))}
-    </div>
-  );
+            {children}
+        </motion.div>
+    );
 }
 
-function FilterPill({
-  href,
-  children,
-  active,
-}: {
-  href: string;
-  children: React.ReactNode;
-  active?: boolean;
-}) {
-  return (
-    <Link
-      href={href}
-      className={cn(
-        "inline-flex items-center rounded-full border px-4 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900",
-        active
-          ? "border-slate-900 bg-slate-900 text-white"
-          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900",
-      )}
-      prefetch
-    >
-      {children}
-    </Link>
-  );
-}
+const accentBorders = [
+    "hover:border-cyan-500/50",
+    "hover:border-violet-500/50",
+    "hover:border-emerald-500/50",
+];
 
+const accentTexts = [
+    "text-cyan-400",
+    "text-violet-400",
+    "text-emerald-400",
+];
+
+const accentGlows = [
+    "from-cyan-500/10",
+    "from-violet-500/10",
+    "from-emerald-500/10",
+];
+
+export default function ProjectsPage() {
+    return (
+        <div className="max-w-6xl mx-auto px-6 pt-28 pb-20">
+            {/* Header */}
+            <FadeIn>
+                <p className="text-sm uppercase tracking-[0.3em] text-cyan-400 mb-3">Work</p>
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
+                    <h1 className="text-5xl md:text-6xl font-bold leading-tight">Case Studies</h1>
+                    <p className="text-[var(--color-brand-muted)] max-w-md text-balance">
+                        Deep dives into product builds, research, and experimental launches.
+                    </p>
+                </div>
+            </FadeIn>
+
+            {/* Projects grid */}
+            <div className="grid gap-8 md:grid-cols-2">
+                {PORTFOLIO_DATA.projects.map((project, index) => {
+                    const borderClass = accentBorders[index % 3];
+                    const textClass = accentTexts[index % 3];
+                    const glowClass = accentGlows[index % 3];
+
+                    return (
+                        <FadeIn key={project.id} delay={index * 0.1} className="h-full">
+                            <Link
+                                href={`/projects/${project.id}`}
+                                id={`project-card-${project.id}`}
+                                className={`group block h-full relative overflow-hidden rounded-2xl border border-[var(--color-brand-border)] bg-[var(--color-surface-1)] p-6 md:p-8 ${borderClass} transition-all duration-300 hover:bg-[var(--color-surface-2)]`}
+                            >
+                                {/* Gradient glow on hover */}
+                                <div className={`absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl ${glowClass} to-transparent rounded-full -translate-y-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none blur-2xl`} />
+
+                                <motion.div
+                                    whileHover={{ y: -4 }}
+                                    transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                                    className="relative z-10 space-y-4 h-full flex flex-col"
+                                >
+                                    {/* Number badge */}
+                                    <span className={`text-xs font-mono ${textClass} opacity-50`}>
+                                        0{index + 1}
+                                    </span>
+
+                                    <div className="flex-1">
+                                        <h2 className={`text-2xl font-bold mb-1 transition-colors group-hover:${textClass.replace("text-", "text-")}`}>
+                                            {project.title}
+                                        </h2>
+                                        <p className="text-sm text-[var(--color-brand-muted)] mb-4">{project.subtitle}</p>
+                                        <p className="text-[var(--color-brand-muted)] leading-relaxed line-clamp-3 mb-6">
+                                            {project.description}
+                                        </p>
+                                    </div>
+
+                                    {/* Tech tags */}
+                                    <div className="flex flex-wrap gap-2 mb-6">
+                                        {project.techStack.map((tag) => (
+                                            <span
+                                                key={tag}
+                                                className="text-xs px-3 py-1 rounded-full border border-[var(--color-brand-border)] bg-[var(--color-brand-panel)] text-[var(--color-brand-muted)]"
+                                            >
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+
+                                    {/* Metrics */}
+                                    {project.metrics && project.metrics.length > 0 && (
+                                        <div className="flex flex-wrap gap-3 mb-6">
+                                            {project.metrics.map((m) => (
+                                                <span key={m} className={`text-xs font-medium ${textClass}`}>
+                                                    ✦ {m}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    <div className={`flex items-center gap-1 text-sm font-semibold ${textClass} group-hover:translate-x-1 transition-transform`}>
+                                        View Case Study <ArrowUpRight className="w-4 h-4" />
+                                    </div>
+                                </motion.div>
+                            </Link>
+                        </FadeIn>
+                    );
+                })}
+            </div>
+
+            {/* CTA */}
+            <FadeIn delay={0.3}>
+                <div className="mt-16 text-center">
+                    <p className="text-[var(--color-brand-muted)] mb-4">Looking to see more or collaborate?</p>
+                    <div className="flex justify-center gap-4">
+                        <a
+                            href={PORTFOLIO_DATA.profile.social.github}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-2 border border-[var(--color-brand-border)] text-[var(--color-brand-muted)] hover:text-[var(--color-brand-text)] px-6 py-2.5 rounded-full transition-all text-sm"
+                        >
+                            GitHub <ArrowUpRight className="w-3.5 h-3.5" />
+                        </a>
+                        <Link
+                            href="/contact"
+                            className="inline-flex items-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-6 py-2.5 rounded-full transition-all text-sm"
+                        >
+                            Work Together
+                        </Link>
+                    </div>
+                </div>
+            </FadeIn>
+        </div>
+    );
+}

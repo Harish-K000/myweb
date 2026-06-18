@@ -1,48 +1,29 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 
-const REQUIRED_FIELDS = ["name", "email", "message"] as const;
-
-type ContactPayload = {
-  name: string;
-  email: string;
-  company?: string;
-  message: string;
-};
+const contactSchema = z.object({
+    name: z.string().trim().max(100).optional(),
+    email: z.string().trim().email(),
+    message: z.string().trim().min(10).max(2000),
+});
 
 export async function POST(request: Request) {
-  try {
-    const payload = (await request.json()) as Partial<ContactPayload>;
+    const body = await request.json().catch(() => null);
+    const result = contactSchema.safeParse(body);
 
-    for (const field of REQUIRED_FIELDS) {
-      if (!payload[field] || typeof payload[field] !== "string") {
+    if (!result.success) {
         return NextResponse.json(
-          { error: `Missing required field: ${field}` },
-          { status: 400 },
+            { error: "Invalid form submission." },
+            { status: 400 }
         );
-      }
     }
 
-    const contactMessage = {
-      name: payload.name?.trim(),
-      email: payload.email?.trim(),
-      company: payload.company?.trim() ?? "",
-      message: payload.message?.trim(),
-    };
+    const { name, email, message } = result.data;
+    console.info("Contact form submission received.", {
+        name: name || "Anonymous",
+        email,
+        messageLength: message.length,
+    });
 
-    if (!process.env.RESEND_API_KEY || process.env.NODE_ENV !== "production") {
-      console.info("[contact] New message received", contactMessage);
-      return NextResponse.json({ ok: true, mode: "logged" });
-    }
-
-    // TODO: Wire up Resend integration once API key is configured.
-
-    return NextResponse.json({ ok: true, mode: "queued" });
-  } catch (error) {
-    console.error("[contact] Failed to process request", error);
-    return NextResponse.json(
-      { error: "Unable to send your message right now." },
-      { status: 500 },
-    );
-  }
+    return NextResponse.json({ ok: true });
 }
-
