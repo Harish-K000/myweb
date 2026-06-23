@@ -2,15 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Download, Menu, X } from "lucide-react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import clsx from "clsx";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 
 const NAV_LINKS = [
-  { name: "Projects", href: "/projects" },
-  { name: "About", href: "/about" },
-  { name: "Contact", href: "/contact" },
+  { name: "Journey", href: "/#pipeline" },
+  { name: "Experience", href: "/#experience" },
+  { name: "Projects", href: "/#projects" },
+  { name: "Tech", href: "/#skills" },
+  { name: "Contact", href: "/#contact" },
 ];
 
 export default function Header() {
@@ -43,9 +45,9 @@ export default function Header() {
           {/* Logo */}
           <Link
             href="/"
-            className="font-bold text-xl tracking-tight text-[var(--color-brand-text)] hover:text-cyan-400 transition-colors"
+            className="font-mono-ui font-bold text-lg tracking-tight text-[var(--color-brand-text)] hover:text-cyan-400 transition-colors"
           >
-            Harish K.
+            HK<span className="text-cyan-400">.DEV</span>
           </Link>
 
           {/* Desktop Nav */}
@@ -55,7 +57,7 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 className={clsx(
-                  "text-sm font-medium transition-colors hover:text-cyan-400 relative group",
+                  "font-mono-ui text-xs uppercase tracking-[0.15em] transition-colors hover:text-cyan-400 relative group",
                   pathname === link.href
                     ? "text-cyan-400"
                     : "text-[var(--color-brand-muted)]"
@@ -76,13 +78,12 @@ export default function Header() {
           <div className="flex items-center gap-3">
             <ThemeToggle />
             <a
-              href="/resume"
-              id="header-resume-btn"
-              className="hidden sm:flex items-center gap-2 bg-[var(--color-brand-text)] text-[var(--color-brand-bg)] text-sm font-bold px-4 py-2 rounded-full hover:opacity-85 transition-opacity"
-              title="View/Download Resume"
+              href="/#contact"
+              id="header-hire-btn"
+              className="hidden sm:flex items-center gap-1.5 font-mono-ui text-xs uppercase tracking-[0.15em] border border-cyan-400/40 text-cyan-400 hover:bg-cyan-400/10 px-4 py-2 rounded-md transition-colors"
             >
-              <Download className="w-4 h-4" />
-              <span>Resume</span>
+              <span>Hire Me</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
             </a>
 
             {/* Mobile hamburger */}
@@ -126,11 +127,11 @@ export default function Header() {
               </Link>
             ))}
             <a
-              href="/resume"
-              className="flex items-center gap-2 mt-2 text-lg font-medium py-2 text-[var(--color-brand-muted)] hover:text-cyan-400 transition-colors"
+              href="/#contact"
+              className="flex items-center gap-1.5 mt-2 font-mono-ui text-sm uppercase tracking-[0.15em] py-2 text-cyan-400"
             >
-              <Download className="w-4 h-4" />
-              Resume
+              Hire Me
+              <ArrowUpRight className="w-3.5 h-3.5" />
             </a>
           </nav>
         </div>

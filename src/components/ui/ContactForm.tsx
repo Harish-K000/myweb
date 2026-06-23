@@ -75,23 +75,23 @@ export default function ContactForm({ className = "" }: ContactFormProps) {
             <form onSubmit={handleSubmit} className="space-y-4 text-left" noValidate>
                 {/* Name */}
                 <div>
-                    <label htmlFor="contact-name" className="block text-xs uppercase tracking-[0.15em] text-[var(--color-brand-muted)] mb-1.5">
-                        Name
+                    <label htmlFor="contact-name" className="block font-mono-ui text-xs uppercase tracking-[0.15em] text-cyan-400/80 mb-1.5">
+                        NAME_INPUT
                     </label>
                     <input
                         type="text"
                         id="contact-name"
                         name="name"
-                        placeholder="Your full name"
-                        className="w-full input-surface border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 transition-all placeholder:text-[var(--color-brand-muted)]/50"
+                        placeholder="Your name"
+                        className="w-full input-surface border rounded-md px-4 py-3 text-sm font-mono-ui focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 transition-all placeholder:text-[var(--color-brand-muted)]/50"
                         disabled={formState === "submitting"}
                     />
                 </div>
 
                 {/* Email */}
                 <div>
-                    <label htmlFor="contact-email" className="block text-xs uppercase tracking-[0.15em] text-[var(--color-brand-muted)] mb-1.5">
-                        Email <span className="text-cyan-400">*</span>
+                    <label htmlFor="contact-email" className="block font-mono-ui text-xs uppercase tracking-[0.15em] text-cyan-400/80 mb-1.5">
+                        EMAIL_INPUT <span className="text-cyan-400">*</span>
                     </label>
                     <input
                         type="email"
@@ -99,23 +99,23 @@ export default function ContactForm({ className = "" }: ContactFormProps) {
                         name="email"
                         required
                         placeholder="your@email.com"
-                        className="w-full input-surface border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 transition-all placeholder:text-[var(--color-brand-muted)]/50"
+                        className="w-full input-surface border rounded-md px-4 py-3 text-sm font-mono-ui focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 transition-all placeholder:text-[var(--color-brand-muted)]/50"
                         disabled={formState === "submitting"}
                     />
                 </div>
 
                 {/* Message */}
                 <div>
-                    <label htmlFor="contact-message" className="block text-xs uppercase tracking-[0.15em] text-[var(--color-brand-muted)] mb-1.5">
-                        Message <span className="text-cyan-400">*</span>
+                    <label htmlFor="contact-message" className="block font-mono-ui text-xs uppercase tracking-[0.15em] text-cyan-400/80 mb-1.5">
+                        MESSAGE_INPUT <span className="text-cyan-400">*</span>
                     </label>
                     <textarea
                         id="contact-message"
                         name="message"
                         required
                         rows={5}
-                        placeholder="Tell me about your project, timeline, and goals..."
-                        className="w-full input-surface border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 transition-all placeholder:text-[var(--color-brand-muted)]/50 resize-none"
+                        placeholder="What are you building?"
+                        className="w-full input-surface border rounded-md px-4 py-3 text-sm font-mono-ui focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 transition-all placeholder:text-[var(--color-brand-muted)]/50 resize-none"
                         disabled={formState === "submitting"}
                     />
                 </div>
@@ -133,7 +133,7 @@ export default function ContactForm({ className = "" }: ContactFormProps) {
                     type="submit"
                     id="contact-submit-btn"
                     disabled={formState === "submitting"}
-                    className="w-full flex items-center justify-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+                    className="w-full flex items-center justify-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-black font-mono-ui text-sm font-bold uppercase tracking-[0.1em] py-3.5 rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-2"
                 >
                     {formState === "submitting" ? (
                         <>
@@ -142,7 +142,7 @@ export default function ContactForm({ className = "" }: ContactFormProps) {
                         </>
                     ) : (
                         <>
-                            Send Message <Send className="w-4 h-4" />
+                            <Send className="w-4 h-4" /> Send Message
                         </>
                     )}
                 </button>

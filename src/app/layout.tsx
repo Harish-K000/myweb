@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
 import "@/styles/globals.css";
-import "@/styles/logoloop.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import CursorMascot from "@/components/ui/CursorMascot";
 import { PORTFOLIO_DATA } from "@/data/portfolio";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 const defaultTitle = `${PORTFOLIO_DATA.profile.name} | ${PORTFOLIO_DATA.profile.title}`;
-const description = PORTFOLIO_DATA.profile.summary;
+const description = PORTFOLIO_DATA.profile.tagline;
 
 export const metadata: Metadata = {
     metadataBase: new URL(siteUrl),
@@ -93,7 +91,6 @@ export default function RootLayout({
                 />
             </head>
             <body className="antialiased">
-                <CursorMascot />
                 <Header />
                 <main className="min-h-screen pt-16">
                     {children}

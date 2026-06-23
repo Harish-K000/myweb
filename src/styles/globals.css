@@ -1,33 +1,46 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Design Tokens — Ink / Manga palette ───────────────
-   Black & white comic-panel base with a single "hanko stamp"
-   red accent, used the way manga covers use a single spot color. */
+/* ─── Design Tokens — Neon isometric workshop palette ───
+   Near-black navy base lit by the same cyan/violet/amber neon
+   used across the isometric scene illustrations. */
 :root {
   /* Colors */
-  --color-brand-bg: #08090b;
-  --color-brand-bg-rgb: 8 9 11;
-  --color-brand-text: #f7f7f5;
-  --color-brand-muted: #9a9a96;
-  --color-brand-primary: #ff3b30;
-  --color-brand-secondary: #ffffff;
-  --color-brand-panel: rgba(255, 255, 255, 0.05);
-  --color-brand-border: rgba(255, 255, 255, 0.14);
-  --color-ink-line: rgba(247, 247, 245, 0.9);
+  --color-brand-bg: #060914;
+  --color-brand-bg-rgb: 6 9 20;
+  --color-brand-text: #f1f5fb;
+  --color-brand-muted: #8b9bb4;
+  --color-brand-primary: #38bdf8;
+  --color-brand-secondary: #a78bfa;
+  --color-brand-accent: #fb923c;
+  --color-brand-panel: rgba(255, 255, 255, 0.04);
+  --color-brand-border: rgba(255, 255, 255, 0.1);
 
-  --color-surface-1: rgba(20, 20, 22, 0.6);
-  --color-surface-2: rgba(20, 20, 22, 0.85);
-  --color-surface-3: rgba(8, 9, 11, 0.96);
+  --color-surface-1: rgba(13, 20, 38, 0.6);
+  --color-surface-2: rgba(13, 20, 38, 0.85);
+  --color-surface-3: rgba(6, 9, 20, 0.96);
 
-  --color-border-subtle: rgba(247, 247, 245, 0.12);
-  --color-border-strong: rgba(247, 247, 245, 0.28);
-  --color-input-bg: rgba(8, 9, 11, 0.5);
-  --color-input-border: rgba(247, 247, 245, 0.22);
-  --color-chip-bg: rgba(247, 247, 245, 0.06);
+  --color-border-subtle: rgba(148, 163, 184, 0.16);
+  --color-border-strong: rgba(148, 163, 184, 0.32);
+  --color-input-bg: rgba(6, 9, 20, 0.5);
+  --color-input-border: rgba(148, 163, 184, 0.24);
+  --color-chip-bg: rgba(56, 189, 248, 0.08);
+
+  /* Category accents — used to color-code Tech Stack / Pipeline / Experience */
+  --color-cat-frontend: #38bdf8;
+  --color-cat-backend: #a78bfa;
+  --color-cat-cloud: #fbbf24;
+  --color-cat-languages: #4ade80;
+  --color-cat-data: #818cf8;
+  --color-cat-ai: #2dd4bf;
+  --color-cat-architecture: #fb923c;
+  --color-cat-testing: #fb7185;
+  --color-cat-tools: #94a3b8;
+
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* Radii */
   --radius-sm: 8px;
@@ -37,15 +50,15 @@
 }
 
 [data-theme="light"] {
-  --color-brand-bg: #f8f8f6;
-  --color-brand-bg-rgb: 248 248 246;
-  --color-brand-text: #0a0a0a;
-  --color-brand-muted: #5c5c58;
-  --color-brand-primary: #e0291f;
-  --color-brand-secondary: #0a0a0a;
-  --color-brand-panel: rgba(10, 10, 10, 0.04);
-  --color-brand-border: rgba(10, 10, 10, 0.14);
-  --color-ink-line: rgba(10, 10, 10, 0.92);
+  --color-brand-bg: #f4f6fb;
+  --color-brand-bg-rgb: 244 246 251;
+  --color-brand-text: #0c1525;
+  --color-brand-muted: #5a6b82;
+  --color-brand-primary: #0284c7;
+  --color-brand-secondary: #7c3aed;
+  --color-brand-accent: #ea580c;
+  --color-brand-panel: rgba(11, 18, 32, 0.04);
+  --color-brand-border: rgba(11, 18, 32, 0.1);
 
   --color-surface-1: rgba(255, 255, 255, 0.75);
   --color-surface-2: rgba(255, 255, 255, 0.92);
@@ -97,10 +110,6 @@
     color: var(--color-brand-muted);
   }
 
-  .text-glow {
-    text-shadow: 0 0 24px rgba(34, 211, 238, 0.45);
-  }
-
   /* Surfaces */
   .bg-surface {
     background-color: var(--color-surface-1);
@@ -130,15 +139,6 @@
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border-radius: 16px;
-  }
-
-  /* Hero overlay (gradient fade left → right) */
-  .hero-overlay {
-    background: linear-gradient(
-      to right,
-      rgb(var(--color-brand-bg-rgb) / 0.88) 25%,
-      rgb(var(--color-brand-bg-rgb) / 0) 70%
-    );
   }
 
   /* Site header */
@@ -172,91 +172,166 @@
     color: var(--color-brand-muted);
   }
 
-  /* Animations */
-  .animate-fade-in-up {
-    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-
-  /* Gradient text utility — manga "hanko stamp" red on ink */
+  /* Gradient text utility */
   .gradient-text {
-    background: linear-gradient(100deg, var(--color-brand-primary) 0%, #ff8a65 55%, var(--color-brand-primary) 100%);
+    background: linear-gradient(100deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 55%, var(--color-brand-accent) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
-  /* Glow effect */
-  .glow-cyan {
-    box-shadow: 0 0 30px rgba(255, 59, 48, 0.18);
+  .wobble-hover {
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .wobble-hover:hover {
+    transform: scale(1.03);
   }
 
-  /* ─── Comic / manga panel system ─────────────────────── */
-  .ink-panel {
-    background-color: var(--color-surface-1);
-    border: 2px solid var(--color-ink-line);
-    border-radius: var(--radius-lg);
-    box-shadow: 6px 6px 0 0 var(--color-ink-line);
+  .glow-pulse {
+    animation: glowPulse 4s ease-in-out infinite;
   }
 
-  .ink-panel-hover {
-    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+  .float-slow {
+    animation: floatY 8s ease-in-out infinite;
   }
-  .ink-panel-hover:hover {
-    transform: translate(-3px, -3px);
-    box-shadow: 9px 9px 0 0 var(--color-ink-line);
+  .float-medium {
+    animation: floatY 7s ease-in-out infinite;
+    animation-delay: -1.5s;
   }
-
-  .halftone-bg {
-    background-image: radial-gradient(var(--color-ink-line) 1px, transparent 1.4px);
-    background-size: 14px 14px;
-    opacity: 0.06;
+  .float-fast {
+    animation: floatY 6s ease-in-out infinite;
+    animation-delay: -3s;
   }
 
-  .speech-bubble {
-    position: relative;
-    background: var(--color-brand-text);
-    color: var(--color-brand-bg);
-    border-radius: 18px;
-    padding: 0.5rem 1rem;
-    font-weight: 600;
-  }
-  .speech-bubble::after {
-    content: "";
-    position: absolute;
-    bottom: -8px;
-    left: 24px;
-    border-width: 8px 8px 0 0;
-    border-style: solid;
-    border-color: var(--color-brand-text) transparent transparent transparent;
+  /* ─── Terminal / Tech UI system ──────────────────────── */
+  .font-mono-ui {
+    font-family: var(--font-mono);
   }
 
-  .stamp-accent {
+  .eyebrow-mono {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
     color: var(--color-brand-primary);
   }
 
-  .wobble-hover {
-    transition: transform 0.2s ease;
+  /* Terminal-style card: subtle border + tiny corner brackets, like a
+     blueprint/schematic panel rather than a soft glass card. */
+  .terminal-card {
+    position: relative;
+    background-color: var(--color-surface-1);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-md);
   }
-  .wobble-hover:hover {
-    transform: rotate(-2deg) scale(1.05);
+  .terminal-card::before,
+  .terminal-card::after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-color: var(--color-brand-primary);
+    opacity: 0.6;
+  }
+  .terminal-card::before {
+    top: -1px;
+    left: -1px;
+    border-top: 2px solid;
+    border-left: 2px solid;
+  }
+  .terminal-card::after {
+    bottom: -1px;
+    right: -1px;
+    border-bottom: 2px solid;
+    border-right: 2px solid;
+  }
+
+  .terminal-card-hover {
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+  }
+  .terminal-card-hover:hover {
+    transform: translateY(-8px);
+    border-color: rgba(56, 189, 248, 0.4);
+    box-shadow: 0 24px 50px -20px rgba(56, 189, 248, 0.25);
+  }
+
+  /* Blinking text cursor, e.g. after a typed role */
+  .typed-cursor {
+    display: inline-block;
+    width: 2px;
+    margin-left: 2px;
+    background: var(--color-brand-primary);
+    animation: blinkCursor 1s step-end infinite;
+  }
+
+  /* Soft pulsing availability dot */
+  .status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: #4ade80;
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.5);
+    animation: statusPulse 2s ease-in-out infinite;
+  }
+
+  /* Faint dot-grid texture, used behind hero/section art */
+  .dot-grid-bg {
+    background-image: radial-gradient(rgba(148, 163, 184, 0.35) 1px, transparent 1.4px);
+    background-size: 22px 22px;
+  }
+
+  /* Terminal window chrome (contact section) */
+  .terminal-window {
+    background: var(--color-surface-3);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .terminal-window-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    background: var(--color-surface-2);
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+  .terminal-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
   }
 }
 
 /* ─── Keyframes ──────────────────────────────────────── */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 0.8; }
 }
 
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.3); }
-  50%       { box-shadow: 0 0 0 8px rgba(34, 211, 238, 0); }
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}
+
+@keyframes blinkCursor {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+
+@keyframes statusPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.5); }
+  50%      { box-shadow: 0 0 0 5px rgba(74, 222, 128, 0); }
+}
+
+/* ─── Reduced motion: kill scroll/mouse parallax and decorative loops ── */
+@media (prefers-reduced-motion: reduce) {
+  .glow-pulse,
+  .float-slow,
+  .float-medium,
+  .float-fast {
+    animation: none !important;
+  }
 }
 
 /* ─── Scrollbar ──────────────────────────────────────── */

@@ -77,7 +77,7 @@ export default function AboutPage() {
                     </FadeIn>
                     <FadeIn delay={0.25}>
                         <p className="text-[var(--color-brand-muted)] leading-relaxed">
-                            Currently completing my Master&apos;s in Computer Science at Wilfrid Laurier University while conducting
+                            I completed my Master&apos;s in Applied Computing at Wilfrid Laurier University, where I conducted
                             IEEE-level research on federated learning for next-gen wireless networks.
                         </p>
                     </FadeIn>
@@ -111,7 +111,7 @@ export default function AboutPage() {
                         <div>
                             <p className="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-muted)] mb-1">Focus</p>
                             <p className="text-[var(--color-brand-muted)] text-sm leading-relaxed">
-                                Full-stack engineering, product delivery, 3D web experiences.
+                                Full-stack engineering, cloud architecture, and applied AI.
                             </p>
                         </div>
                         <div className="border-t border-[var(--color-brand-border)]" />
@@ -172,6 +172,29 @@ export default function AboutPage() {
                             </FadeIn>
                         );
                     })}
+                </div>
+            </section>
+
+            {/* Education */}
+            <section className="mt-24">
+                <FadeIn>
+                    <div className="mb-10">
+                        <p className="text-xs uppercase tracking-[0.3em] text-[var(--color-brand-muted)] mb-2">Academics</p>
+                        <h2 className="text-3xl font-bold">Education</h2>
+                    </div>
+                </FadeIn>
+                <div className="grid sm:grid-cols-2 gap-6">
+                    {PORTFOLIO_DATA.education.map((edu, index) => (
+                        <FadeIn key={edu.id} delay={index * 0.1}>
+                            <div className="rounded-2xl border border-[var(--color-brand-border)] bg-[var(--color-surface-1)] p-6 h-full">
+                                <p className="text-xs uppercase tracking-[0.2em] text-cyan-400 mb-2">{edu.period}</p>
+                                <h3 className="text-lg font-semibold mb-1">{edu.degree}</h3>
+                                <p className="text-sm text-[var(--color-brand-muted)] mb-3">{edu.field}</p>
+                                <p className="text-sm">{edu.school}</p>
+                                <p className="text-xs text-[var(--color-brand-muted)]">{edu.location}</p>
+                            </div>
+                        </FadeIn>
+                    ))}
                 </div>
             </section>
 

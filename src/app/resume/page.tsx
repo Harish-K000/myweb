@@ -92,6 +92,29 @@ export default function ResumePage() {
                 </div>
             </section>
 
+            {/* Education */}
+            <section>
+                <FadeIn>
+                    <div className="mb-8">
+                        <p className="text-xs uppercase tracking-[0.3em] text-[var(--color-brand-muted)] mb-2">Academics</p>
+                        <h2 className="text-3xl font-bold">Education</h2>
+                    </div>
+                </FadeIn>
+                <div className="grid sm:grid-cols-2 gap-6">
+                    {PORTFOLIO_DATA.education.map((edu, index) => (
+                        <FadeIn key={edu.id} delay={index * 0.08}>
+                            <div className="glass-panel p-6 h-full">
+                                <p className="text-xs uppercase tracking-[0.2em] text-cyan-400 mb-2">{edu.period}</p>
+                                <h3 className="text-lg font-semibold mb-1">{edu.degree}</h3>
+                                <p className="text-sm text-[var(--color-brand-muted)] mb-3">{edu.field}</p>
+                                <p className="text-sm">{edu.school}</p>
+                                <p className="text-xs text-[var(--color-brand-muted)]">{edu.location}</p>
+                            </div>
+                        </FadeIn>
+                    ))}
+                </div>
+            </section>
+
             {/* Skills */}
             <section>
                 <FadeIn>
@@ -114,6 +137,28 @@ export default function ResumePage() {
                                 </span>
                             ))}
                         </div>
+                    </div>
+                </FadeIn>
+            </section>
+
+            {/* Certifications */}
+            <section>
+                <FadeIn>
+                    <div className="mb-8">
+                        <p className="text-xs uppercase tracking-[0.3em] text-[var(--color-brand-muted)] mb-2">Credentials</p>
+                        <h2 className="text-3xl font-bold">Certifications</h2>
+                    </div>
+                </FadeIn>
+                <FadeIn delay={0.1}>
+                    <div className="glass-panel p-6 md:p-8">
+                        <ul className="space-y-3">
+                            {PORTFOLIO_DATA.certifications.map((cert) => (
+                                <li key={cert} className="flex gap-3 text-sm text-[var(--color-brand-muted)] leading-relaxed">
+                                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-cyan-400 flex-shrink-0" />
+                                    {cert}
+                                </li>
+                            ))}
+                        </ul>
                     </div>
                 </FadeIn>
             </section>

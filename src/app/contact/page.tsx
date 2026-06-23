@@ -3,7 +3,7 @@
 import ContactForm from "@/components/ui/ContactForm";
 import { PORTFOLIO_DATA } from "@/data/portfolio";
 import { motion } from "framer-motion";
-import { Github, Linkedin, Mail, CalendarDays } from "lucide-react";
+import { Github, Linkedin, Mail, Phone } from "lucide-react";
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
     return (
@@ -23,15 +23,23 @@ const contactChannels = [
     {
         icon: Mail,
         label: "Email",
-        value: "harish.kannan.dev@gmail.com",
+        value: PORTFOLIO_DATA.profile.social.email.replace("mailto:", ""),
         href: PORTFOLIO_DATA.profile.social.email,
         external: false,
         description: "I respond within 48 hours",
     },
     {
+        icon: Phone,
+        label: "Phone",
+        value: PORTFOLIO_DATA.profile.social.phoneDisplay,
+        href: PORTFOLIO_DATA.profile.social.phone,
+        external: false,
+        description: "Available by call or text",
+    },
+    {
         icon: Github,
         label: "GitHub",
-        value: "github.com/harishkannan",
+        value: PORTFOLIO_DATA.profile.social.github.replace("https://github.com/", "github.com/"),
         href: PORTFOLIO_DATA.profile.social.github,
         external: true,
         description: "Open source & project work",
@@ -39,7 +47,7 @@ const contactChannels = [
     {
         icon: Linkedin,
         label: "LinkedIn",
-        value: "linkedin.com/in/harish-kannan",
+        value: PORTFOLIO_DATA.profile.social.linkedin.replace("https://www.linkedin.com/in/", "linkedin.com/in/"),
         href: PORTFOLIO_DATA.profile.social.linkedin,
         external: true,
         description: "Let's connect professionally",
