@@ -1,48 +1,80 @@
 import { NextResponse } from "next/server";
+import { Resend } from "resend";
+import { z } from "zod";
 
-const REQUIRED_FIELDS = ["name", "email", "message"] as const;
+const contactSchema = z.object({
+    name: z.string().trim().max(100).optional(),
+    email: z.string().trim().email(),
+    message: z.string().trim().min(10).max(2000),
+});
 
-type ContactPayload = {
-  name: string;
-  email: string;
-  company?: string;
-  message: string;
-};
-
-export async function POST(request: Request) {
-  try {
-    const payload = (await request.json()) as Partial<ContactPayload>;
-
-    for (const field of REQUIRED_FIELDS) {
-      if (!payload[field] || typeof payload[field] !== "string") {
-        return NextResponse.json(
-          { error: `Missing required field: ${field}` },
-          { status: 400 },
-        );
-      }
-    }
-
-    const contactMessage = {
-      name: payload.name?.trim(),
-      email: payload.email?.trim(),
-      company: payload.company?.trim() ?? "",
-      message: payload.message?.trim(),
-    };
-
-    if (!process.env.RESEND_API_KEY || process.env.NODE_ENV !== "production") {
-      console.info("[contact] New message received", contactMessage);
-      return NextResponse.json({ ok: true, mode: "logged" });
-    }
-
-    // TODO: Wire up Resend integration once API key is configured.
-
-    return NextResponse.json({ ok: true, mode: "queued" });
-  } catch (error) {
-    console.error("[contact] Failed to process request", error);
-    return NextResponse.json(
-      { error: "Unable to send your message right now." },
-      { status: 500 },
-    );
-  }
+function escapeHtml(value: string) {
+    return value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
 }
 
+export async function POST(request: Request) {
+    const body = await request.json().catch(() => null);
+    const result = contactSchema.safeParse(body);
+
+    if (!result.success) {
+        return NextResponse.json(
+            { error: "Invalid form submission." },
+            { status: 400 }
+        );
+    }
+
+    const { name, email, message } = result.data;
+    const displayName = name || "Anonymous";
+
+    const apiKey = process.env.RESEND_API_KEY;
+    const toEmail = process.env.CONTACT_TO_EMAIL;
+    const fromEmail = process.env.CONTACT_FROM_EMAIL;
+
+    if (!apiKey || !toEmail || !fromEmail) {
+        console.error(
+            "Contact form is misconfigured: missing RESEND_API_KEY, CONTACT_TO_EMAIL, or CONTACT_FROM_EMAIL."
+        );
+        return NextResponse.json(
+            { error: "The contact form isn't set up yet. Please reach out via email or LinkedIn instead." },
+            { status: 503 }
+        );
+    }
+
+    const resend = new Resend(apiKey);
+
+    try {
+        const { error } = await resend.emails.send({
+            from: fromEmail,
+            to: toEmail,
+            replyTo: email,
+            subject: `New portfolio message from ${displayName}`,
+            html: `
+                <p><strong>Name:</strong> ${escapeHtml(displayName)}</p>
+                <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+                <p><strong>Message:</strong></p>
+                <p>${escapeHtml(message).replace(/\n/g, "<br />")}</p>
+            `,
+        });
+
+        if (error) {
+            console.error("Resend failed to send contact email.", error);
+            return NextResponse.json(
+                { error: "Unable to send message right now. Please try again later." },
+                { status: 502 }
+            );
+        }
+    } catch (error) {
+        console.error("Unexpected error sending contact email.", error);
+        return NextResponse.json(
+            { error: "Unable to send message right now. Please try again later." },
+            { status: 500 }
+        );
+    }
+
+    return NextResponse.json({ ok: true });
+}

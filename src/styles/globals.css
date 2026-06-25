@@ -1,0 +1,438 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Design Tokens — The Developer Kingdom ─────────────
+   Dark fantasy stone/ember/gold palette, with a cool rune-blue
+   reserved for "technology magic" accents. */
+:root {
+  /* Colors */
+  --color-brand-bg: #080605;
+  --color-brand-bg-rgb: 8 6 5;
+  --color-brand-text: #f8f1e3;
+  --color-brand-muted: #b8aa94;
+  --color-brand-primary: #d6a84f;   /* molten gold */
+  --color-brand-secondary: #7dd3fc; /* rune glow cyan */
+  --color-brand-accent: #ff6a2a;    /* ember */
+  --color-brand-panel: rgba(248, 241, 227, 0.04);
+  --color-brand-border: rgba(214, 168, 79, 0.18);
+
+  --color-surface-1: rgba(24, 18, 13, 0.65);
+  --color-surface-2: rgba(24, 18, 13, 0.88);
+  --color-surface-3: rgba(13, 10, 7, 0.96);
+
+  --color-border-subtle: rgba(184, 170, 148, 0.18);
+  --color-border-strong: rgba(214, 168, 79, 0.35);
+  --color-input-bg: rgba(13, 10, 7, 0.55);
+  --color-input-border: rgba(184, 170, 148, 0.25);
+  --color-chip-bg: rgba(214, 168, 79, 0.08);
+
+  /* Category accents — gem/rune colors for Grimoire / Forge / Quest path */
+  --color-cat-frontend: #60a5fa;     /* rune blue — enchanted UI */
+  --color-cat-backend: #d6a84f;      /* gold — forge engine */
+  --color-cat-cloud: #ff6a2a;        /* ember — portal tower */
+  --color-cat-languages: #7c9473;    /* sage — ancient script */
+  --color-cat-data: #9b7fd4;         /* amethyst — data vault */
+  --color-cat-ai: #4fb8a8;           /* arcane teal — AI magic */
+  --color-cat-architecture: #a97142; /* bronze — structural craft */
+  --color-cat-testing: #b91c1c;      /* crimson — trial by combat */
+  --color-cat-tools: #8a7c6a;        /* warm stone — tools & guilds */
+
+  --font-display: 'Cinzel', 'Times New Roman', serif;
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+}
+
+[data-theme="light"] {
+  --color-brand-bg: #f4ead8;
+  --color-brand-bg-rgb: 244 234 216;
+  --color-brand-text: #1f1710;
+  --color-brand-muted: #6b5b45;
+  --color-brand-primary: #b8872f;
+  --color-brand-secondary: #0284c7;
+  --color-brand-accent: #c2410c;
+  --color-brand-panel: rgba(31, 23, 16, 0.04);
+  --color-brand-border: #d8c3a5;
+
+  --color-surface-1: #fff8ea;
+  --color-surface-2: #fdf2dc;
+  --color-surface-3: #fffaf0;
+
+  --color-border-subtle: #d8c3a5;
+  --color-border-strong: rgba(184, 135, 47, 0.4);
+  --color-input-bg: #fffaf0;
+  --color-input-border: #d8c3a5;
+  --color-chip-bg: rgba(184, 135, 47, 0.08);
+}
+
+/* ─── Base ──────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    color-scheme: dark;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  [data-theme="light"] {
+    color-scheme: light;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background-color: var(--color-brand-bg);
+    color: var(--color-brand-text);
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02", "rlig" 1, "calt" 1;
+    transition: background-color 0.35s ease, color 0.35s ease;
+    line-height: 1.6;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(214, 168, 79, 0.06), transparent 32%),
+      radial-gradient(circle at 85% 30%, rgba(96, 165, 250, 0.045), transparent 28%);
+  }
+
+  ::selection {
+    background: rgba(214, 168, 79, 0.3);
+    color: var(--color-brand-text);
+  }
+}
+
+/* ─── Utilities ──────────────────────────────────────── */
+@layer utilities {
+  /* Text */
+  .text-muted {
+    color: var(--color-brand-muted);
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  /* Surfaces */
+  .bg-surface {
+    background-color: var(--color-surface-1);
+  }
+
+  .bg-surface-strong {
+    background-color: var(--color-surface-2);
+  }
+
+  .bg-surface-solid {
+    background-color: var(--color-surface-3);
+  }
+
+  /* Borders */
+  .border-subtle {
+    border-color: var(--color-border-subtle);
+  }
+
+  .border-strong {
+    border-color: var(--color-border-strong);
+  }
+
+  /* Glass */
+  .glass-panel {
+    background-color: var(--color-brand-panel);
+    border: 1px solid var(--color-brand-border);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 16px;
+  }
+
+  /* Site header */
+  .site-header {
+    background-color: rgb(var(--color-brand-bg-rgb) / 0.82);
+    border-bottom: 1px solid var(--color-brand-border);
+  }
+
+  /* Site footer */
+  .site-footer {
+    background-color: var(--color-brand-bg);
+  }
+
+  /* Contact section */
+  .contact-surface {
+    background: linear-gradient(135deg, var(--color-surface-2), var(--color-surface-3));
+    border: 1px solid var(--color-border-subtle);
+  }
+
+  /* Inputs */
+  .input-surface {
+    background-color: var(--color-input-bg);
+    border-color: var(--color-input-border);
+    color: var(--color-brand-text);
+  }
+
+  /* Chips / tags */
+  .chip-surface {
+    background-color: var(--color-chip-bg);
+    border: 1px solid var(--color-border-subtle);
+    color: var(--color-brand-muted);
+  }
+
+  /* Gradient text — molten gold to ember, like text catching forge-light */
+  .gradient-text {
+    background: linear-gradient(100deg, var(--color-brand-primary) 0%, #f3c969 45%, var(--color-brand-accent) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .wobble-hover {
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .wobble-hover:hover {
+    transform: scale(1.03);
+  }
+
+  .glow-pulse {
+    animation: glowPulse 4s ease-in-out infinite;
+  }
+
+  .float-slow {
+    animation: floatY 8s ease-in-out infinite;
+  }
+  .float-medium {
+    animation: floatY 7s ease-in-out infinite;
+    animation-delay: -1.5s;
+  }
+  .float-fast {
+    animation: floatY 6s ease-in-out infinite;
+    animation-delay: -3s;
+  }
+
+  /* Perspective motion system shared by all inner pages. */
+  .depth-card {
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    will-change: transform;
+    transition:
+      transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.35s ease,
+      box-shadow 0.45s ease,
+      background-color 0.35s ease;
+  }
+
+  .parallax-rune {
+    border: 1px solid;
+    opacity: 0.48;
+  }
+
+  .parallax-rune::before,
+  .parallax-rune::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -5px;
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: var(--color-brand-primary);
+    box-shadow: 0 0 18px var(--color-brand-primary);
+  }
+
+  .parallax-rune::after {
+    top: auto;
+    bottom: -5px;
+    transform: translateX(-50%);
+  }
+
+  .parallax-glyph {
+    display: grid;
+    place-items: center;
+    min-width: 48px;
+    height: 48px;
+    padding: 0 10px;
+    border: 1px solid;
+    border-radius: 999px;
+    background: rgb(var(--color-brand-bg-rgb) / 0.56);
+    box-shadow: 0 14px 40px -18px currentColor;
+    font-family: var(--font-display);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    opacity: 0.34;
+    backdrop-filter: blur(8px);
+  }
+
+  .parallax-glyph-near {
+    opacity: 0.5;
+    transform: scale(1.12);
+  }
+
+  .parallax-grid {
+    transform-origin: center bottom;
+    background-size: 54px 54px;
+    mask-image: linear-gradient(to bottom, transparent, black 35%, transparent 92%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 35%, transparent 92%);
+    opacity: 0.78;
+  }
+
+  /* ─── Kingdom UI system ───────────────────────────────── */
+
+  /* Small caps rune label — used for eyebrows / section kickers */
+  .eyebrow-rune {
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--color-brand-primary);
+  }
+
+  /* Stone card: warm parchment-on-stone surface with a gold hairline
+     border and small inscribed corner marks, like a carved tablet. */
+  .stone-card {
+    position: relative;
+    background-color: var(--color-surface-1);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-md);
+    box-shadow: inset 0 1px 0 rgba(248, 241, 227, 0.04), 0 1px 0 rgba(0, 0, 0, 0.3);
+  }
+  .stone-card::before,
+  .stone-card::after {
+    content: "";
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border: 1.5px solid var(--color-brand-primary);
+    opacity: 0.55;
+    transform: rotate(45deg);
+  }
+  .stone-card::before {
+    top: 10px;
+    left: 10px;
+  }
+  .stone-card::after {
+    bottom: 10px;
+    right: 10px;
+  }
+
+  .stone-card-hover {
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+  }
+  .stone-card-hover:hover {
+    transform: translateY(-8px);
+    border-color: rgba(214, 168, 79, 0.55);
+    box-shadow: 0 24px 50px -20px rgba(214, 168, 79, 0.3);
+  }
+
+  /* Pulsing ember — the beacon is lit */
+  .status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--color-brand-accent);
+    box-shadow: 0 0 0 0 rgba(255, 106, 42, 0.5);
+    animation: statusPulse 2s ease-in-out infinite;
+  }
+
+  /* Faint ember/star speckle field, used behind hero/section art */
+  .ember-field-bg {
+    background-image: radial-gradient(rgba(214, 168, 79, 0.4) 1px, transparent 1.6px);
+    background-size: 26px 26px;
+  }
+
+  /* Stone archway frame — used for the Summoning Gate contact panel */
+  .portal-frame {
+    background: var(--color-surface-3);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .portal-frame-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 18px;
+    background: var(--color-surface-2);
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+  .seal-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--color-brand-primary);
+    opacity: 0.7;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .depth-card:hover {
+    transform: perspective(1100px) translateY(-7px) rotateX(1.2deg) rotateY(-1.2deg);
+    border-color: var(--color-border-strong);
+    box-shadow:
+      0 28px 60px -30px rgba(214, 168, 79, 0.38),
+      inset 0 1px 0 rgba(248, 241, 227, 0.06);
+  }
+}
+
+/* ─── Keyframes ──────────────────────────────────────── */
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 0.8; }
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}
+
+@keyframes statusPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 106, 42, 0.5); }
+  50%      { box-shadow: 0 0 0 5px rgba(255, 106, 42, 0); }
+}
+
+/* ─── Reduced motion: kill scroll/mouse parallax and decorative loops ── */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .glow-pulse,
+  .float-slow,
+  .float-medium,
+  .float-fast {
+    animation: none !important;
+  }
+
+  .depth-card {
+    transition-duration: 0.01ms !important;
+  }
+
+  .depth-card:hover {
+    transform: none;
+  }
+}
+
+/* ─── Scrollbar ──────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(214, 168, 79, 0.25);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(214, 168, 79, 0.4);
+}

@@ -1,103 +1,96 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { Nav } from "@/components/Nav";
-import { Footer } from "@/components/Footer";
-import { siteConfig } from "@/data/site";
+import "@/styles/globals.css";
+import { PORTFOLIO_DATA } from "@/data/portfolio";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
-const baseUrl = "https://harishkannan.dev";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const defaultTitle = `${PORTFOLIO_DATA.profile.name} | ${PORTFOLIO_DATA.profile.title}`;
+const description = PORTFOLIO_DATA.profile.tagline;
 
 export const metadata: Metadata = {
-  metadataBase: new URL(baseUrl),
-  title: {
-    default: `${siteConfig.name} · ${siteConfig.role}`,
-    template: `%s · ${siteConfig.name}`,
-  },
-  description: siteConfig.description,
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: baseUrl,
-    title: `${siteConfig.name} · ${siteConfig.role}`,
-    description: siteConfig.description,
-    siteName: siteConfig.name,
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: `${siteConfig.name} portfolio preview`,
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${siteConfig.name} · ${siteConfig.role}`,
-    description: siteConfig.description,
-    creator: "@harishcodes", // placeholder; update with actual handle
-    images: ["/og-image.png"],
-  },
-  alternates: {
-    canonical: "/",
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  name: siteConfig.name,
-  jobTitle: siteConfig.role,
-  url: baseUrl,
-  sameAs: [siteConfig.links.linkedin, siteConfig.links.github],
-  email: siteConfig.links.email.replace("mailto:", ""),
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: siteConfig.location,
-  },
+    metadataBase: new URL(siteUrl),
+    title: {
+        default: defaultTitle,
+        template: `%s | ${PORTFOLIO_DATA.profile.name}`,
+    },
+    description,
+    alternates: {
+        canonical: "/",
+    },
+    openGraph: {
+        title: defaultTitle,
+        description,
+        url: siteUrl,
+        siteName: PORTFOLIO_DATA.profile.name,
+        images: [
+            {
+                url: "/og-image.svg",
+                width: 1200,
+                height: 630,
+                alt: `${PORTFOLIO_DATA.profile.name} portfolio`,
+            },
+        ],
+        type: "website",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: defaultTitle,
+        description,
+        images: ["/og-image.svg"],
+    },
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+            index: true,
+            follow: true,
+            "max-image-preview": "large",
+        },
+    },
 };
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} bg-slate-50 text-slate-900 antialiased`}
-      >
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded focus:bg-white focus:px-4 focus:py-2 focus:text-slate-900 focus:shadow"
-        >
-          Skip to content
-        </a>
-        <Nav />
-        <main id="main">{children}</main>
-        <Footer />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-      </body>
-    </html>
-  );
+    const personSchema = {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        name: PORTFOLIO_DATA.profile.name,
+        url: siteUrl,
+        jobTitle: PORTFOLIO_DATA.profile.title,
+        email: PORTFOLIO_DATA.profile.social.email,
+        sameAs: [
+            PORTFOLIO_DATA.profile.social.github,
+            PORTFOLIO_DATA.profile.social.linkedin,
+        ],
+    };
+
+    const themeScript = `
+        (function () {
+            try {
+                var stored = localStorage.getItem("theme");
+                var theme = stored === "light" || stored === "dark"
+                    ? stored
+                    : (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+                document.documentElement.dataset.theme = theme;
+                document.documentElement.style.colorScheme = theme;
+            } catch (e) {}
+        })();
+    `;
+
+    return (
+        <html lang="en" suppressHydrationWarning>
+            <head>
+                <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+                />
+            </head>
+            <body className="antialiased">
+                {children}
+            </body>
+        </html>
+    );
 }

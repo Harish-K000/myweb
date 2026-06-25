@@ -1,0 +1,173 @@
+"use client";
+
+import { PORTFOLIO_DATA } from "@/data/portfolio";
+import Link from "next/link";
+import { Download, ExternalLink } from "lucide-react";
+import ParallaxBackdrop from "@/components/ui/ParallaxBackdrop";
+import { Reveal } from "@/components/ui/MotionPrimitives";
+
+const accentColors: Record<number, string> = { 0: "gold", 1: "rune", 2: "ember", 3: "gold" };
+const dotColors: Record<string, string> = { gold: "bg-gold-400", rune: "bg-rune-400", ember: "bg-ember-400" };
+const labelColors: Record<string, string> = { gold: "text-gold-400", rune: "text-rune-400", ember: "text-ember-400" };
+const borderColors: Record<string, string> = { gold: "border-gold-500/20", rune: "border-rune-500/20", ember: "border-ember-500/20" };
+
+export default function ResumePage() {
+    return (
+        <div className="relative isolate overflow-hidden">
+            <ParallaxBackdrop accent="gold" density="quiet" />
+            <div className="relative z-10 max-w-5xl mx-auto px-6 pt-28 pb-20 space-y-16">
+            {/* Header */}
+            <Reveal>
+                <p className="text-sm uppercase tracking-[0.3em] text-gold-400 mb-3">Resume</p>
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-4">
+                    <div>
+                        <h1 className="font-display text-5xl md:text-6xl font-bold leading-tight">{PORTFOLIO_DATA.profile.name}</h1>
+                        <p className="text-xl text-[var(--color-brand-muted)] mt-2">{PORTFOLIO_DATA.profile.title}</p>
+                    </div>
+                    <div className="flex gap-3">
+                        <a
+                            href="/resume.pdf"
+                            download
+                            className="inline-flex items-center gap-2 bg-gold-500 hover:bg-gold-400 text-black font-bold px-6 py-3 rounded-full transition-all text-sm"
+                        >
+                            <Download className="w-4 h-4" /> Download PDF
+                        </a>
+                        <Link
+                            href="/contact"
+                            className="inline-flex items-center gap-2 border border-[var(--color-brand-border)] text-[var(--color-brand-muted)] hover:text-[var(--color-brand-text)] px-6 py-3 rounded-full transition-all text-sm"
+                        >
+                            Contact Me
+                        </Link>
+                    </div>
+                </div>
+                <p className="text-[var(--color-brand-muted)] max-w-2xl leading-relaxed">{PORTFOLIO_DATA.profile.summary}</p>
+            </Reveal>
+
+            {/* Experience */}
+            <section>
+                <Reveal>
+                    <div className="mb-8">
+                        <p className="text-xs uppercase tracking-[0.3em] text-[var(--color-brand-muted)] mb-2">Career</p>
+                        <h2 className="text-3xl font-bold">Experience</h2>
+                    </div>
+                </Reveal>
+                <div className="space-y-6">
+                    {PORTFOLIO_DATA.experience.map((job, index) => {
+                        const accent = accentColors[index % 4];
+                        return (
+                            <Reveal key={job.id} delay={index * 0.08}>
+                                <div className={`glass-panel depth-card p-6 md:p-8 border-l-4 ${borderColors[accent]}`}>
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
+                                        <div>
+                                            <h3 className="text-xl font-bold">{job.role}</h3>
+                                            <p className={`text-sm ${labelColors[accent]} mt-0.5`}>{job.company}</p>
+                                        </div>
+                                        <span className="text-sm text-[var(--color-brand-muted)] whitespace-nowrap border border-[var(--color-brand-border)] px-3 py-1 rounded-full">
+                                            {job.period}
+                                        </span>
+                                    </div>
+                                    <ul className="space-y-2 mt-4">
+                                        {job.description.map((desc, i) => (
+                                            <li key={i} className="flex gap-3 text-sm text-[var(--color-brand-muted)] leading-relaxed">
+                                                <span className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${dotColors[accent]}`} />
+                                                {desc}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </Reveal>
+                        );
+                    })}
+                </div>
+            </section>
+
+            {/* Education */}
+            <section>
+                <Reveal>
+                    <div className="mb-8">
+                        <p className="text-xs uppercase tracking-[0.3em] text-[var(--color-brand-muted)] mb-2">Academics</p>
+                        <h2 className="text-3xl font-bold">Education</h2>
+                    </div>
+                </Reveal>
+                <div className="grid sm:grid-cols-2 gap-6">
+                    {PORTFOLIO_DATA.education.map((edu, index) => (
+                        <Reveal key={edu.id} delay={index * 0.08}>
+                            <div className="glass-panel depth-card p-6 h-full">
+                                <p className="text-xs uppercase tracking-[0.2em] text-gold-400 mb-2">{edu.period}</p>
+                                <h3 className="text-lg font-semibold mb-1">{edu.degree}</h3>
+                                <p className="text-sm text-[var(--color-brand-muted)] mb-3">{edu.field}</p>
+                                <p className="text-sm">{edu.school}</p>
+                                <p className="text-xs text-[var(--color-brand-muted)]">{edu.location}</p>
+                            </div>
+                        </Reveal>
+                    ))}
+                </div>
+            </section>
+
+            {/* Skills */}
+            <section>
+                <Reveal>
+                    <div className="mb-8">
+                        <p className="text-xs uppercase tracking-[0.3em] text-[var(--color-brand-muted)] mb-2">Stack</p>
+                        <h2 className="text-3xl font-bold">Technical Skills</h2>
+                    </div>
+                </Reveal>
+                <Reveal delay={0.1}>
+                    <div className="glass-panel depth-card p-6 md:p-8">
+                        <div className="flex flex-wrap gap-3">
+                            {PORTFOLIO_DATA.techStack.map((tech) => (
+                                <span
+                                    key={tech.key}
+                                    className="flex items-center gap-2 text-sm px-4 py-2 rounded-full border border-[var(--color-brand-border)] bg-[var(--color-surface-1)] font-medium transition-all hover:scale-105"
+                                    style={{ color: tech.color }}
+                                >
+                                    <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: tech.color }} />
+                                    {tech.key}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                </Reveal>
+            </section>
+
+            {/* Certifications */}
+            <section>
+                <Reveal>
+                    <div className="mb-8">
+                        <p className="text-xs uppercase tracking-[0.3em] text-[var(--color-brand-muted)] mb-2">Credentials</p>
+                        <h2 className="text-3xl font-bold">Certifications</h2>
+                    </div>
+                </Reveal>
+                <Reveal delay={0.1}>
+                    <div className="glass-panel depth-card p-6 md:p-8">
+                        <ul className="space-y-3">
+                            {PORTFOLIO_DATA.certifications.map((cert) => (
+                                <li key={cert} className="flex gap-3 text-sm text-[var(--color-brand-muted)] leading-relaxed">
+                                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-gold-400 flex-shrink-0" />
+                                    {cert}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </Reveal>
+            </section>
+
+            {/* CTA */}
+            <Reveal delay={0.2}>
+                <div className="depth-card text-center p-8 rounded-2xl border border-[var(--color-brand-border)] bg-[var(--color-surface-1)]">
+                    <h3 className="text-2xl font-bold mb-2">Ready to connect?</h3>
+                    <p className="text-[var(--color-brand-muted)] mb-6">
+                        Open to senior full-stack roles and research positions. Let&apos;s talk.
+                    </p>
+                    <Link
+                        href="/contact"
+                        className="inline-flex items-center gap-2 bg-gold-500 hover:bg-gold-400 text-black font-bold px-8 py-3 rounded-full transition-all"
+                    >
+                        Get in Touch <ExternalLink className="w-4 h-4" />
+                    </Link>
+                </div>
+            </Reveal>
+            </div>
+        </div>
+    );
+}
