@@ -50,11 +50,14 @@ export default function ContactForm({ className = "" }: ContactFormProps) {
     if (formState === "success") {
         return (
             <div className="flex flex-col items-center justify-center py-10 gap-4 text-center">
-                <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
-                    <CheckCircle2 className="w-7 h-7 text-emerald-400" />
+                <div
+                    className="w-14 h-14 rounded-full flex items-center justify-center"
+                    style={{ background: "rgba(214,168,79,0.1)", border: "1px solid rgba(214,168,79,0.3)" }}
+                >
+                    <CheckCircle2 className="w-7 h-7" style={{ color: "var(--color-brand-primary)" }} />
                 </div>
                 <div>
-                    <p className="text-lg font-semibold text-[var(--color-brand-text)]">Message sent!</p>
+                    <p className="font-display text-lg font-semibold text-[var(--color-brand-text)]">The raven has flown.</p>
                     <p className="text-sm text-[var(--color-brand-muted)] mt-1">
                         I&apos;ll get back to you within 48 hours.
                     </p>
@@ -62,7 +65,8 @@ export default function ContactForm({ className = "" }: ContactFormProps) {
                 <button
                     type="button"
                     onClick={() => setFormState("idle")}
-                    className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors underline underline-offset-2"
+                    className="text-sm hover:opacity-80 transition-opacity underline underline-offset-2"
+                    style={{ color: "var(--color-brand-primary)" }}
                 >
                     Send another message
                 </button>
@@ -75,23 +79,24 @@ export default function ContactForm({ className = "" }: ContactFormProps) {
             <form onSubmit={handleSubmit} className="space-y-4 text-left" noValidate>
                 {/* Name */}
                 <div>
-                    <label htmlFor="contact-name" className="block font-mono-ui text-xs uppercase tracking-[0.15em] text-cyan-400/80 mb-1.5">
-                        NAME_INPUT
+                    <label htmlFor="contact-name" className="block text-xs uppercase tracking-[0.15em] mb-1.5" style={{ color: "var(--color-brand-muted)" }}>
+                        Your Name
                     </label>
                     <input
                         type="text"
                         id="contact-name"
                         name="name"
-                        placeholder="Your name"
-                        className="w-full input-surface border rounded-md px-4 py-3 text-sm font-mono-ui focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 transition-all placeholder:text-[var(--color-brand-muted)]/50"
+                        placeholder="Who approaches the gate?"
+                        className="w-full input-surface border rounded-md px-4 py-3 text-sm focus:outline-none focus:ring-2 transition-all placeholder:text-[var(--color-brand-muted)]/50"
+                        style={{ "--tw-ring-color": "rgba(214,168,79,0.3)" } as React.CSSProperties}
                         disabled={formState === "submitting"}
                     />
                 </div>
 
                 {/* Email */}
                 <div>
-                    <label htmlFor="contact-email" className="block font-mono-ui text-xs uppercase tracking-[0.15em] text-cyan-400/80 mb-1.5">
-                        EMAIL_INPUT <span className="text-cyan-400">*</span>
+                    <label htmlFor="contact-email" className="block text-xs uppercase tracking-[0.15em] mb-1.5" style={{ color: "var(--color-brand-muted)" }}>
+                        Your Email <span style={{ color: "var(--color-brand-primary)" }}>*</span>
                     </label>
                     <input
                         type="email"
@@ -99,15 +104,16 @@ export default function ContactForm({ className = "" }: ContactFormProps) {
                         name="email"
                         required
                         placeholder="your@email.com"
-                        className="w-full input-surface border rounded-md px-4 py-3 text-sm font-mono-ui focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 transition-all placeholder:text-[var(--color-brand-muted)]/50"
+                        className="w-full input-surface border rounded-md px-4 py-3 text-sm focus:outline-none focus:ring-2 transition-all placeholder:text-[var(--color-brand-muted)]/50"
+                        style={{ "--tw-ring-color": "rgba(214,168,79,0.3)" } as React.CSSProperties}
                         disabled={formState === "submitting"}
                     />
                 </div>
 
                 {/* Message */}
                 <div>
-                    <label htmlFor="contact-message" className="block font-mono-ui text-xs uppercase tracking-[0.15em] text-cyan-400/80 mb-1.5">
-                        MESSAGE_INPUT <span className="text-cyan-400">*</span>
+                    <label htmlFor="contact-message" className="block text-xs uppercase tracking-[0.15em] mb-1.5" style={{ color: "var(--color-brand-muted)" }}>
+                        Your Message <span style={{ color: "var(--color-brand-primary)" }}>*</span>
                     </label>
                     <textarea
                         id="contact-message"
@@ -115,14 +121,15 @@ export default function ContactForm({ className = "" }: ContactFormProps) {
                         required
                         rows={5}
                         placeholder="What are you building?"
-                        className="w-full input-surface border rounded-md px-4 py-3 text-sm font-mono-ui focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 transition-all placeholder:text-[var(--color-brand-muted)]/50 resize-none"
+                        className="w-full input-surface border rounded-md px-4 py-3 text-sm focus:outline-none focus:ring-2 transition-all placeholder:text-[var(--color-brand-muted)]/50 resize-none"
+                        style={{ "--tw-ring-color": "rgba(214,168,79,0.3)" } as React.CSSProperties}
                         disabled={formState === "submitting"}
                     />
                 </div>
 
                 {/* Error state */}
                 {formState === "error" && (
-                    <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
+                    <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-md px-4 py-3">
                         <AlertCircle className="w-4 h-4 flex-shrink-0" />
                         {errorMessage}
                     </div>
@@ -133,7 +140,8 @@ export default function ContactForm({ className = "" }: ContactFormProps) {
                     type="submit"
                     id="contact-submit-btn"
                     disabled={formState === "submitting"}
-                    className="w-full flex items-center justify-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-black font-mono-ui text-sm font-bold uppercase tracking-[0.1em] py-3.5 rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+                    className="w-full flex items-center justify-center gap-2 font-display text-sm font-bold uppercase tracking-[0.1em] py-3.5 rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+                    style={{ background: "var(--color-brand-primary)", color: "#1f1710" }}
                 >
                     {formState === "submitting" ? (
                         <>

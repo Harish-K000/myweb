@@ -1,74 +1,74 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Design Tokens — Neon isometric workshop palette ───
-   Near-black navy base lit by the same cyan/violet/amber neon
-   used across the isometric scene illustrations. */
+/* ─── Design Tokens — The Developer Kingdom ─────────────
+   Dark fantasy stone/ember/gold palette, with a cool rune-blue
+   reserved for "technology magic" accents. */
 :root {
   /* Colors */
-  --color-brand-bg: #060914;
-  --color-brand-bg-rgb: 6 9 20;
-  --color-brand-text: #f1f5fb;
-  --color-brand-muted: #8b9bb4;
-  --color-brand-primary: #38bdf8;
-  --color-brand-secondary: #a78bfa;
-  --color-brand-accent: #fb923c;
-  --color-brand-panel: rgba(255, 255, 255, 0.04);
-  --color-brand-border: rgba(255, 255, 255, 0.1);
+  --color-brand-bg: #080605;
+  --color-brand-bg-rgb: 8 6 5;
+  --color-brand-text: #f8f1e3;
+  --color-brand-muted: #b8aa94;
+  --color-brand-primary: #d6a84f;   /* molten gold */
+  --color-brand-secondary: #7dd3fc; /* rune glow cyan */
+  --color-brand-accent: #ff6a2a;    /* ember */
+  --color-brand-panel: rgba(248, 241, 227, 0.04);
+  --color-brand-border: rgba(214, 168, 79, 0.18);
 
-  --color-surface-1: rgba(13, 20, 38, 0.6);
-  --color-surface-2: rgba(13, 20, 38, 0.85);
-  --color-surface-3: rgba(6, 9, 20, 0.96);
+  --color-surface-1: rgba(24, 18, 13, 0.65);
+  --color-surface-2: rgba(24, 18, 13, 0.88);
+  --color-surface-3: rgba(13, 10, 7, 0.96);
 
-  --color-border-subtle: rgba(148, 163, 184, 0.16);
-  --color-border-strong: rgba(148, 163, 184, 0.32);
-  --color-input-bg: rgba(6, 9, 20, 0.5);
-  --color-input-border: rgba(148, 163, 184, 0.24);
-  --color-chip-bg: rgba(56, 189, 248, 0.08);
+  --color-border-subtle: rgba(184, 170, 148, 0.18);
+  --color-border-strong: rgba(214, 168, 79, 0.35);
+  --color-input-bg: rgba(13, 10, 7, 0.55);
+  --color-input-border: rgba(184, 170, 148, 0.25);
+  --color-chip-bg: rgba(214, 168, 79, 0.08);
 
-  /* Category accents — used to color-code Tech Stack / Pipeline / Experience */
-  --color-cat-frontend: #38bdf8;
-  --color-cat-backend: #a78bfa;
-  --color-cat-cloud: #fbbf24;
-  --color-cat-languages: #4ade80;
-  --color-cat-data: #818cf8;
-  --color-cat-ai: #2dd4bf;
-  --color-cat-architecture: #fb923c;
-  --color-cat-testing: #fb7185;
-  --color-cat-tools: #94a3b8;
+  /* Category accents — gem/rune colors for Grimoire / Forge / Quest path */
+  --color-cat-frontend: #60a5fa;     /* rune blue — enchanted UI */
+  --color-cat-backend: #d6a84f;      /* gold — forge engine */
+  --color-cat-cloud: #ff6a2a;        /* ember — portal tower */
+  --color-cat-languages: #7c9473;    /* sage — ancient script */
+  --color-cat-data: #9b7fd4;         /* amethyst — data vault */
+  --color-cat-ai: #4fb8a8;           /* arcane teal — AI magic */
+  --color-cat-architecture: #a97142; /* bronze — structural craft */
+  --color-cat-testing: #b91c1c;      /* crimson — trial by combat */
+  --color-cat-tools: #8a7c6a;        /* warm stone — tools & guilds */
 
-  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-display: 'Cinzel', 'Times New Roman', serif;
 
   /* Radii */
-  --radius-sm: 8px;
-  --radius-md: 12px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
   --radius-lg: 16px;
   --radius-xl: 24px;
 }
 
 [data-theme="light"] {
-  --color-brand-bg: #f4f6fb;
-  --color-brand-bg-rgb: 244 246 251;
-  --color-brand-text: #0c1525;
-  --color-brand-muted: #5a6b82;
-  --color-brand-primary: #0284c7;
-  --color-brand-secondary: #7c3aed;
-  --color-brand-accent: #ea580c;
-  --color-brand-panel: rgba(11, 18, 32, 0.04);
-  --color-brand-border: rgba(11, 18, 32, 0.1);
+  --color-brand-bg: #f4ead8;
+  --color-brand-bg-rgb: 244 234 216;
+  --color-brand-text: #1f1710;
+  --color-brand-muted: #6b5b45;
+  --color-brand-primary: #b8872f;
+  --color-brand-secondary: #0284c7;
+  --color-brand-accent: #c2410c;
+  --color-brand-panel: rgba(31, 23, 16, 0.04);
+  --color-brand-border: #d8c3a5;
 
-  --color-surface-1: rgba(255, 255, 255, 0.75);
-  --color-surface-2: rgba(255, 255, 255, 0.92);
-  --color-surface-3: rgba(255, 255, 255, 0.98);
+  --color-surface-1: #fff8ea;
+  --color-surface-2: #fdf2dc;
+  --color-surface-3: #fffaf0;
 
-  --color-border-subtle: rgba(10, 10, 10, 0.12);
-  --color-border-strong: rgba(10, 10, 10, 0.22);
-  --color-input-bg: rgba(255, 255, 255, 0.88);
-  --color-input-border: rgba(10, 10, 10, 0.2);
-  --color-chip-bg: rgba(10, 10, 10, 0.05);
+  --color-border-subtle: #d8c3a5;
+  --color-border-strong: rgba(184, 135, 47, 0.4);
+  --color-input-bg: #fffaf0;
+  --color-input-border: #d8c3a5;
+  --color-chip-bg: rgba(184, 135, 47, 0.08);
 }
 
 /* ─── Base ──────────────────────────────────────────── */
@@ -97,8 +97,19 @@
     line-height: 1.6;
   }
 
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(214, 168, 79, 0.06), transparent 32%),
+      radial-gradient(circle at 85% 30%, rgba(96, 165, 250, 0.045), transparent 28%);
+  }
+
   ::selection {
-    background: rgba(34, 211, 238, 0.25);
+    background: rgba(214, 168, 79, 0.3);
     color: var(--color-brand-text);
   }
 }
@@ -108,6 +119,10 @@
   /* Text */
   .text-muted {
     color: var(--color-brand-muted);
+  }
+
+  .font-display {
+    font-family: var(--font-display);
   }
 
   /* Surfaces */
@@ -143,7 +158,7 @@
 
   /* Site header */
   .site-header {
-    background-color: rgb(var(--color-brand-bg-rgb) / 0.80);
+    background-color: rgb(var(--color-brand-bg-rgb) / 0.82);
     border-bottom: 1px solid var(--color-brand-border);
   }
 
@@ -172,9 +187,9 @@
     color: var(--color-brand-muted);
   }
 
-  /* Gradient text utility */
+  /* Gradient text — molten gold to ember, like text catching forge-light */
   .gradient-text {
-    background: linear-gradient(100deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 55%, var(--color-brand-accent) 100%);
+    background: linear-gradient(100deg, var(--color-brand-primary) 0%, #f3c969 45%, var(--color-brand-accent) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -203,103 +218,168 @@
     animation-delay: -3s;
   }
 
-  /* ─── Terminal / Tech UI system ──────────────────────── */
-  .font-mono-ui {
-    font-family: var(--font-mono);
+  /* Perspective motion system shared by all inner pages. */
+  .depth-card {
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    will-change: transform;
+    transition:
+      transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.35s ease,
+      box-shadow 0.45s ease,
+      background-color 0.35s ease;
   }
 
-  .eyebrow-mono {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.25em;
+  .parallax-rune {
+    border: 1px solid;
+    opacity: 0.48;
+  }
+
+  .parallax-rune::before,
+  .parallax-rune::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -5px;
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: var(--color-brand-primary);
+    box-shadow: 0 0 18px var(--color-brand-primary);
+  }
+
+  .parallax-rune::after {
+    top: auto;
+    bottom: -5px;
+    transform: translateX(-50%);
+  }
+
+  .parallax-glyph {
+    display: grid;
+    place-items: center;
+    min-width: 48px;
+    height: 48px;
+    padding: 0 10px;
+    border: 1px solid;
+    border-radius: 999px;
+    background: rgb(var(--color-brand-bg-rgb) / 0.56);
+    box-shadow: 0 14px 40px -18px currentColor;
+    font-family: var(--font-display);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    opacity: 0.34;
+    backdrop-filter: blur(8px);
+  }
+
+  .parallax-glyph-near {
+    opacity: 0.5;
+    transform: scale(1.12);
+  }
+
+  .parallax-grid {
+    transform-origin: center bottom;
+    background-size: 54px 54px;
+    mask-image: linear-gradient(to bottom, transparent, black 35%, transparent 92%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 35%, transparent 92%);
+    opacity: 0.78;
+  }
+
+  /* ─── Kingdom UI system ───────────────────────────────── */
+
+  /* Small caps rune label — used for eyebrows / section kickers */
+  .eyebrow-rune {
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    letter-spacing: 0.32em;
     text-transform: uppercase;
     color: var(--color-brand-primary);
   }
 
-  /* Terminal-style card: subtle border + tiny corner brackets, like a
-     blueprint/schematic panel rather than a soft glass card. */
-  .terminal-card {
+  /* Stone card: warm parchment-on-stone surface with a gold hairline
+     border and small inscribed corner marks, like a carved tablet. */
+  .stone-card {
     position: relative;
     background-color: var(--color-surface-1);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-md);
+    box-shadow: inset 0 1px 0 rgba(248, 241, 227, 0.04), 0 1px 0 rgba(0, 0, 0, 0.3);
   }
-  .terminal-card::before,
-  .terminal-card::after {
+  .stone-card::before,
+  .stone-card::after {
     content: "";
     position: absolute;
-    width: 10px;
-    height: 10px;
-    border-color: var(--color-brand-primary);
-    opacity: 0.6;
+    width: 7px;
+    height: 7px;
+    border: 1.5px solid var(--color-brand-primary);
+    opacity: 0.55;
+    transform: rotate(45deg);
   }
-  .terminal-card::before {
-    top: -1px;
-    left: -1px;
-    border-top: 2px solid;
-    border-left: 2px solid;
+  .stone-card::before {
+    top: 10px;
+    left: 10px;
   }
-  .terminal-card::after {
-    bottom: -1px;
-    right: -1px;
-    border-bottom: 2px solid;
-    border-right: 2px solid;
+  .stone-card::after {
+    bottom: 10px;
+    right: 10px;
   }
 
-  .terminal-card-hover {
+  .stone-card-hover {
     transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease, box-shadow 0.35s ease;
   }
-  .terminal-card-hover:hover {
+  .stone-card-hover:hover {
     transform: translateY(-8px);
-    border-color: rgba(56, 189, 248, 0.4);
-    box-shadow: 0 24px 50px -20px rgba(56, 189, 248, 0.25);
+    border-color: rgba(214, 168, 79, 0.55);
+    box-shadow: 0 24px 50px -20px rgba(214, 168, 79, 0.3);
   }
 
-  /* Blinking text cursor, e.g. after a typed role */
-  .typed-cursor {
-    display: inline-block;
-    width: 2px;
-    margin-left: 2px;
-    background: var(--color-brand-primary);
-    animation: blinkCursor 1s step-end infinite;
-  }
-
-  /* Soft pulsing availability dot */
+  /* Pulsing ember — the beacon is lit */
   .status-dot {
     display: inline-block;
     width: 6px;
     height: 6px;
     border-radius: 999px;
-    background: #4ade80;
-    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.5);
+    background: var(--color-brand-accent);
+    box-shadow: 0 0 0 0 rgba(255, 106, 42, 0.5);
     animation: statusPulse 2s ease-in-out infinite;
   }
 
-  /* Faint dot-grid texture, used behind hero/section art */
-  .dot-grid-bg {
-    background-image: radial-gradient(rgba(148, 163, 184, 0.35) 1px, transparent 1.4px);
-    background-size: 22px 22px;
+  /* Faint ember/star speckle field, used behind hero/section art */
+  .ember-field-bg {
+    background-image: radial-gradient(rgba(214, 168, 79, 0.4) 1px, transparent 1.6px);
+    background-size: 26px 26px;
   }
 
-  /* Terminal window chrome (contact section) */
-  .terminal-window {
+  /* Stone archway frame — used for the Summoning Gate contact panel */
+  .portal-frame {
     background: var(--color-surface-3);
     border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     overflow: hidden;
   }
-  .terminal-window-bar {
+  .portal-frame-bar {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 10px 14px;
+    gap: 8px;
+    padding: 14px 18px;
     background: var(--color-surface-2);
     border-bottom: 1px solid var(--color-border-subtle);
   }
-  .terminal-dot {
-    width: 10px;
-    height: 10px;
+  .seal-dot {
+    width: 8px;
+    height: 8px;
     border-radius: 999px;
+    background: var(--color-brand-primary);
+    opacity: 0.7;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .depth-card:hover {
+    transform: perspective(1100px) translateY(-7px) rotateX(1.2deg) rotateY(-1.2deg);
+    border-color: var(--color-border-strong);
+    box-shadow:
+      0 28px 60px -30px rgba(214, 168, 79, 0.38),
+      inset 0 1px 0 rgba(248, 241, 227, 0.06);
   }
 }
 
@@ -314,23 +394,30 @@
   50%      { transform: translateY(-12px); }
 }
 
-@keyframes blinkCursor {
-  0%, 100% { opacity: 1; }
-  50%      { opacity: 0; }
-}
-
 @keyframes statusPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.5); }
-  50%      { box-shadow: 0 0 0 5px rgba(74, 222, 128, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 106, 42, 0.5); }
+  50%      { box-shadow: 0 0 0 5px rgba(255, 106, 42, 0); }
 }
 
 /* ─── Reduced motion: kill scroll/mouse parallax and decorative loops ── */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   .glow-pulse,
   .float-slow,
   .float-medium,
   .float-fast {
     animation: none !important;
+  }
+
+  .depth-card {
+    transition-duration: 0.01ms !important;
+  }
+
+  .depth-card:hover {
+    transform: none;
   }
 }
 
@@ -343,9 +430,9 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.2);
+  background: rgba(214, 168, 79, 0.25);
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.35);
+  background: rgba(214, 168, 79, 0.4);
 }

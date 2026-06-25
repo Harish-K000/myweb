@@ -2,22 +2,9 @@
 
 import ContactForm from "@/components/ui/ContactForm";
 import { PORTFOLIO_DATA } from "@/data/portfolio";
-import { motion } from "framer-motion";
 import { Github, Linkedin, Mail, Phone } from "lucide-react";
-
-function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.7, delay, ease: "easeOut" }}
-            className={className}
-        >
-            {children}
-        </motion.div>
-    );
-}
+import ParallaxBackdrop from "@/components/ui/ParallaxBackdrop";
+import { Reveal } from "@/components/ui/MotionPrimitives";
 
 const contactChannels = [
     {
@@ -56,23 +43,25 @@ const contactChannels = [
 
 export default function ContactPage() {
     return (
-        <div className="max-w-6xl mx-auto px-6 pt-28 pb-20">
+        <div className="relative isolate overflow-hidden">
+            <ParallaxBackdrop accent="gold" />
+            <div className="relative z-10 max-w-6xl mx-auto px-6 pt-28 pb-20">
             {/* Header */}
-            <FadeIn>
-                <p className="text-sm uppercase tracking-[0.3em] text-cyan-400 mb-3">Contact</p>
-                <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+            <Reveal>
+                <p className="text-sm uppercase tracking-[0.3em] text-gold-400 mb-3">Contact</p>
+                <h1 className="font-display text-5xl md:text-6xl font-bold mb-6 leading-tight">
                     Let&apos;s build something<br className="hidden md:block" /> cinematic.
                 </h1>
                 <p className="text-xl text-[var(--color-brand-muted)] max-w-lg mb-12 leading-relaxed">
                     Tell me about your goals, your timeline, and how I can help.
                     I&apos;m currently open to full-time roles and freelance projects.
                 </p>
-            </FadeIn>
+            </Reveal>
 
             <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] items-start">
                 {/* Left — contact info */}
                 <div className="space-y-6">
-                    <FadeIn delay={0.1}>
+                    <Reveal delay={0.1}>
                         <div className="space-y-4">
                             {contactChannels.map((ch, i) => {
                                 const Icon = ch.icon;
@@ -82,42 +71,43 @@ export default function ContactPage() {
                                         href={ch.href}
                                         target={ch.external ? "_blank" : undefined}
                                         rel={ch.external ? "noreferrer" : undefined}
-                                        className="flex items-start gap-4 p-4 rounded-2xl border border-[var(--color-brand-border)] bg-[var(--color-surface-1)] hover:bg-[var(--color-surface-2)] hover:border-cyan-500/30 transition-all group"
+                                        className="depth-card flex items-start gap-4 p-4 rounded-2xl border border-[var(--color-brand-border)] bg-[var(--color-surface-1)] hover:bg-[var(--color-surface-2)] hover:border-gold-500/30 transition-all group"
                                     >
-                                        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex-shrink-0 group-hover:bg-cyan-500/20 transition-colors">
-                                            <Icon className="w-4 h-4 text-cyan-400" />
+                                        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gold-500/10 border border-gold-500/20 flex-shrink-0 group-hover:bg-gold-500/20 transition-colors">
+                                            <Icon className="w-4 h-4 text-gold-400" />
                                         </div>
                                         <div>
                                             <p className="text-sm font-semibold text-[var(--color-brand-text)]">{ch.label}</p>
-                                            <p className="text-sm text-cyan-400">{ch.value}</p>
+                                            <p className="text-sm text-gold-400">{ch.value}</p>
                                             <p className="text-xs text-[var(--color-brand-muted)] mt-0.5">{ch.description}</p>
                                         </div>
                                     </a>
                                 );
                             })}
                         </div>
-                    </FadeIn>
+                    </Reveal>
 
-                    <FadeIn delay={0.2}>
-                        <div className="p-4 rounded-2xl border border-[var(--color-brand-border)] bg-[var(--color-surface-1)]">
+                    <Reveal delay={0.2}>
+                        <div className="depth-card p-4 rounded-2xl border border-[var(--color-brand-border)] bg-[var(--color-surface-1)]">
                             <div className="flex items-center gap-2 mb-2">
-                                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                                <p className="text-sm font-semibold text-emerald-400">Available for Opportunities</p>
+                                <span className="w-2 h-2 rounded-full bg-ember-400 animate-pulse" />
+                                <p className="text-sm font-semibold text-ember-400">Available for Opportunities</p>
                             </div>
                             <p className="text-sm text-[var(--color-brand-muted)]">
                                 Open to senior full-stack roles and research positions. Remote-friendly.
                             </p>
                         </div>
-                    </FadeIn>
+                    </Reveal>
                 </div>
 
                 {/* Right — form */}
-                <FadeIn delay={0.15}>
-                    <div className="glass-panel p-6 md:p-8">
+                <Reveal delay={0.15}>
+                    <div className="glass-panel depth-card p-6 md:p-8">
                         <h2 className="text-xl font-semibold mb-6">Send a Message</h2>
                         <ContactForm />
                     </div>
-                </FadeIn>
+                </Reveal>
+            </div>
             </div>
         </div>
     );

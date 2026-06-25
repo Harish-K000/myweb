@@ -1,47 +1,34 @@
 "use client";
 
 import { PORTFOLIO_DATA } from "@/data/portfolio";
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { Github, Linkedin, Mail, ArrowRight } from "lucide-react";
-
-function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.7, delay, ease: "easeOut" }}
-            className={className}
-        >
-            {children}
-        </motion.div>
-    );
-}
+import ParallaxBackdrop from "@/components/ui/ParallaxBackdrop";
+import { Reveal } from "@/components/ui/MotionPrimitives";
 
 const accentColors: Record<number, string> = {
-    0: "cyan",
-    1: "violet",
-    2: "emerald",
-    3: "cyan",
+    0: "gold",
+    1: "rune",
+    2: "ember",
+    3: "gold",
 };
 
 const dotColors: Record<string, string> = {
-    cyan: "bg-cyan-400",
-    violet: "bg-violet-400",
-    emerald: "bg-emerald-400",
+    gold: "bg-gold-400",
+    rune: "bg-rune-400",
+    ember: "bg-ember-400",
 };
 
 const borderColors: Record<string, string> = {
-    cyan: "border-cyan-500/30",
-    violet: "border-violet-500/30",
-    emerald: "border-emerald-500/30",
+    gold: "border-gold-500/30",
+    rune: "border-rune-500/30",
+    ember: "border-ember-500/30",
 };
 
 const labelColors: Record<string, string> = {
-    cyan: "text-cyan-400",
-    violet: "text-violet-400",
-    emerald: "text-emerald-400",
+    gold: "text-gold-400",
+    rune: "text-rune-400",
+    ember: "text-ember-400",
 };
 
 export default function AboutPage() {
@@ -52,57 +39,59 @@ export default function AboutPage() {
     ];
 
     return (
-        <div className="max-w-6xl mx-auto px-6 pt-28 pb-20">
+        <div className="relative isolate overflow-hidden">
+            <ParallaxBackdrop accent="gold" />
+            <div className="relative z-10 max-w-6xl mx-auto px-6 pt-28 pb-20">
             {/* Hero section */}
-            <FadeIn>
-                <p className="text-sm uppercase tracking-[0.3em] text-cyan-400 mb-3">About</p>
-                <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+            <Reveal>
+                <p className="text-sm uppercase tracking-[0.3em] text-gold-400 mb-3">About</p>
+                <h1 className="font-display text-5xl md:text-6xl font-bold mb-6 leading-tight">
                     {PORTFOLIO_DATA.profile.name}
                 </h1>
-            </FadeIn>
+            </Reveal>
 
             <div className="grid gap-12 lg:grid-cols-[1.3fr_0.7fr] items-start mt-8">
                 <div className="space-y-5">
-                    <FadeIn delay={0.1}>
+                    <Reveal delay={0.1}>
                         <p className="text-xl text-[var(--color-brand-muted)] leading-relaxed">
                             {PORTFOLIO_DATA.profile.summary}
                         </p>
-                    </FadeIn>
-                    <FadeIn delay={0.2}>
+                    </Reveal>
+                    <Reveal delay={0.2}>
                         <p className="text-[var(--color-brand-muted)] leading-relaxed">
                             I focus on building production systems that feel cinematic and reliable — from the first pixel
                             to the final deployment. My work blends product sense with engineering depth, helping teams ship
                             fast without breaking what matters.
                         </p>
-                    </FadeIn>
-                    <FadeIn delay={0.25}>
+                    </Reveal>
+                    <Reveal delay={0.25}>
                         <p className="text-[var(--color-brand-muted)] leading-relaxed">
                             I completed my Master&apos;s in Applied Computing at Wilfrid Laurier University, where I conducted
                             IEEE-level research on federated learning for next-gen wireless networks.
                         </p>
-                    </FadeIn>
+                    </Reveal>
 
-                    <FadeIn delay={0.3}>
+                    <Reveal delay={0.3}>
                         <div className="flex flex-wrap gap-3 pt-4">
                             <Link
                                 href="/projects"
-                                className="inline-flex items-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-6 py-2.5 rounded-full transition-all text-sm"
+                                className="inline-flex items-center gap-2 bg-gold-500 hover:bg-gold-400 text-black font-semibold px-6 py-2.5 rounded-full transition-all text-sm"
                             >
                                 View Projects <ArrowRight className="w-4 h-4" />
                             </Link>
                             <Link
                                 href="/contact"
-                                className="inline-flex items-center gap-2 border border-[var(--color-border-subtle)] hover:border-cyan-400/40 text-[var(--color-brand-text)] px-6 py-2.5 rounded-full transition-all text-sm"
+                                className="inline-flex items-center gap-2 border border-[var(--color-border-subtle)] hover:border-gold-400/40 text-[var(--color-brand-text)] px-6 py-2.5 rounded-full transition-all text-sm"
                             >
                                 Get in Touch
                             </Link>
                         </div>
-                    </FadeIn>
+                    </Reveal>
                 </div>
 
                 {/* Info card */}
-                <FadeIn delay={0.15}>
-                    <div className="glass-panel p-6 space-y-6 sticky top-24">
+                <Reveal delay={0.15}>
+                    <div className="glass-panel depth-card p-6 space-y-6 sticky top-24">
                         <div>
                             <p className="text-xs uppercase tracking-[0.2em] text-[var(--color-brand-muted)] mb-1">Role</p>
                             <p className="text-lg font-semibold">{PORTFOLIO_DATA.profile.title}</p>
@@ -126,7 +115,7 @@ export default function AboutPage() {
                                             href={s.href}
                                             target={s.external ? "_blank" : undefined}
                                             rel={s.external ? "noreferrer" : undefined}
-                                            className="flex items-center gap-3 text-sm text-[var(--color-brand-muted)] hover:text-cyan-400 transition-colors group"
+                                            className="flex items-center gap-3 text-sm text-[var(--color-brand-muted)] hover:text-gold-400 transition-colors group"
                                         >
                                             <Icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
                                             {s.label}
@@ -136,23 +125,23 @@ export default function AboutPage() {
                             </div>
                         </div>
                     </div>
-                </FadeIn>
+                </Reveal>
             </div>
 
             {/* Experience timeline */}
             <section className="mt-24">
-                <FadeIn>
+                <Reveal>
                     <div className="mb-10">
                         <p className="text-xs uppercase tracking-[0.3em] text-[var(--color-brand-muted)] mb-2">Career</p>
                         <h2 className="text-3xl font-bold">Experience</h2>
                     </div>
-                </FadeIn>
+                </Reveal>
                 <div className="relative space-y-8 border-l-2 border-[var(--color-brand-border)] pl-8 ml-2">
                     {PORTFOLIO_DATA.experience.map((job, index) => {
-                        const accent = accentColors[index % 4] || "cyan";
+                        const accent = accentColors[index % 4] || "gold";
                         return (
-                            <FadeIn key={job.id} delay={index * 0.1}>
-                                <div className={`relative border ${borderColors[accent]} rounded-2xl p-6 bg-[var(--color-surface-1)] hover:bg-[var(--color-surface-2)] transition-colors`}>
+                            <Reveal key={job.id} delay={index * 0.1}>
+                                <div className={`depth-card relative border ${borderColors[accent]} rounded-2xl p-6 bg-[var(--color-surface-1)] hover:bg-[var(--color-surface-2)] transition-colors`}>
                                     {/* Timeline dot */}
                                     <span className={`absolute -left-[2.85rem] top-6 w-4 h-4 rounded-full ${dotColors[accent]} border-4 border-[var(--color-brand-bg)]`} />
 
@@ -169,7 +158,7 @@ export default function AboutPage() {
                                         ))}
                                     </ul>
                                 </div>
-                            </FadeIn>
+                            </Reveal>
                         );
                     })}
                 </div>
@@ -177,36 +166,36 @@ export default function AboutPage() {
 
             {/* Education */}
             <section className="mt-24">
-                <FadeIn>
+                <Reveal>
                     <div className="mb-10">
                         <p className="text-xs uppercase tracking-[0.3em] text-[var(--color-brand-muted)] mb-2">Academics</p>
                         <h2 className="text-3xl font-bold">Education</h2>
                     </div>
-                </FadeIn>
+                </Reveal>
                 <div className="grid sm:grid-cols-2 gap-6">
                     {PORTFOLIO_DATA.education.map((edu, index) => (
-                        <FadeIn key={edu.id} delay={index * 0.1}>
-                            <div className="rounded-2xl border border-[var(--color-brand-border)] bg-[var(--color-surface-1)] p-6 h-full">
-                                <p className="text-xs uppercase tracking-[0.2em] text-cyan-400 mb-2">{edu.period}</p>
+                        <Reveal key={edu.id} delay={index * 0.1}>
+                            <div className="depth-card rounded-2xl border border-[var(--color-brand-border)] bg-[var(--color-surface-1)] p-6 h-full">
+                                <p className="text-xs uppercase tracking-[0.2em] text-gold-400 mb-2">{edu.period}</p>
                                 <h3 className="text-lg font-semibold mb-1">{edu.degree}</h3>
                                 <p className="text-sm text-[var(--color-brand-muted)] mb-3">{edu.field}</p>
                                 <p className="text-sm">{edu.school}</p>
                                 <p className="text-xs text-[var(--color-brand-muted)]">{edu.location}</p>
                             </div>
-                        </FadeIn>
+                        </Reveal>
                     ))}
                 </div>
             </section>
 
             {/* Tech Stack */}
             <section className="mt-24">
-                <FadeIn>
+                <Reveal>
                     <div className="mb-8">
                         <p className="text-xs uppercase tracking-[0.3em] text-[var(--color-brand-muted)] mb-2">Stack</p>
                         <h2 className="text-3xl font-bold">Tools I Ship With</h2>
                     </div>
-                </FadeIn>
-                <FadeIn delay={0.1}>
+                </Reveal>
+                <Reveal delay={0.1}>
                     <div className="flex flex-wrap gap-3">
                         {PORTFOLIO_DATA.techStack.map((tech) => (
                             <span
@@ -218,8 +207,9 @@ export default function AboutPage() {
                             </span>
                         ))}
                     </div>
-                </FadeIn>
+                </Reveal>
             </section>
+            </div>
         </div>
     );
 }

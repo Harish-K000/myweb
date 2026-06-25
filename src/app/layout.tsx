@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import "@/styles/globals.css";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
 import { PORTFOLIO_DATA } from "@/data/portfolio";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -82,7 +80,7 @@ export default function RootLayout({
     `;
 
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
             <head>
                 <script dangerouslySetInnerHTML={{ __html: themeScript }} />
                 <script
@@ -91,11 +89,7 @@ export default function RootLayout({
                 />
             </head>
             <body className="antialiased">
-                <Header />
-                <main className="min-h-screen pt-16">
-                    {children}
-                </main>
-                <Footer />
+                {children}
             </body>
         </html>
     );

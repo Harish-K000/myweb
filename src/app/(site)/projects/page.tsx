@@ -4,52 +4,42 @@ import Link from "next/link";
 import { PORTFOLIO_DATA } from "@/data/portfolio";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-
-function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.7, delay, ease: "easeOut" }}
-            className={className}
-        >
-            {children}
-        </motion.div>
-    );
-}
+import ParallaxBackdrop from "@/components/ui/ParallaxBackdrop";
+import { Reveal } from "@/components/ui/MotionPrimitives";
 
 const accentBorders = [
-    "hover:border-cyan-500/50",
-    "hover:border-violet-500/50",
-    "hover:border-emerald-500/50",
+    "hover:border-gold-500/50",
+    "hover:border-rune-500/50",
+    "hover:border-ember-500/50",
 ];
 
 const accentTexts = [
-    "text-cyan-400",
-    "text-violet-400",
-    "text-emerald-400",
+    "text-gold-400",
+    "text-rune-400",
+    "text-ember-400",
 ];
 
 const accentGlows = [
-    "from-cyan-500/10",
-    "from-violet-500/10",
-    "from-emerald-500/10",
+    "from-gold-500/10",
+    "from-rune-500/10",
+    "from-ember-500/10",
 ];
 
 export default function ProjectsPage() {
     return (
-        <div className="max-w-6xl mx-auto px-6 pt-28 pb-20">
+        <div className="relative isolate overflow-hidden">
+            <ParallaxBackdrop accent="gold" />
+            <div className="relative z-10 max-w-6xl mx-auto px-6 pt-28 pb-20">
             {/* Header */}
-            <FadeIn>
-                <p className="text-sm uppercase tracking-[0.3em] text-cyan-400 mb-3">Work</p>
+            <Reveal>
+                <p className="text-sm uppercase tracking-[0.3em] text-gold-400 mb-3">Work</p>
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
-                    <h1 className="text-5xl md:text-6xl font-bold leading-tight">Case Studies</h1>
+                    <h1 className="font-display text-5xl md:text-6xl font-bold leading-tight">Case Studies</h1>
                     <p className="text-[var(--color-brand-muted)] max-w-md text-balance">
                         Deep dives into product builds, research, and experimental launches.
                     </p>
                 </div>
-            </FadeIn>
+            </Reveal>
 
             {/* Projects grid */}
             <div className="grid gap-8 md:grid-cols-2">
@@ -59,11 +49,11 @@ export default function ProjectsPage() {
                     const glowClass = accentGlows[index % 3];
 
                     return (
-                        <FadeIn key={project.id} delay={index * 0.1} className="h-full">
+                        <Reveal key={project.id} delay={index * 0.1} className="h-full">
                             <Link
                                 href={`/projects/${project.id}`}
                                 id={`project-card-${project.id}`}
-                                className={`group block h-full relative overflow-hidden rounded-2xl border border-[var(--color-brand-border)] bg-[var(--color-surface-1)] p-6 md:p-8 ${borderClass} transition-all duration-300 hover:bg-[var(--color-surface-2)]`}
+                                className={`depth-card group block h-full relative overflow-hidden rounded-2xl border border-[var(--color-brand-border)] bg-[var(--color-surface-1)] p-6 md:p-8 ${borderClass} transition-all duration-300 hover:bg-[var(--color-surface-2)]`}
                             >
                                 {/* Gradient glow on hover */}
                                 <div className={`absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl ${glowClass} to-transparent rounded-full -translate-y-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none blur-2xl`} />
@@ -79,7 +69,7 @@ export default function ProjectsPage() {
                                     </span>
 
                                     <div className="flex-1">
-                                        <h2 className={`text-2xl font-bold mb-1 transition-colors group-hover:${textClass.replace("text-", "text-")}`}>
+                                        <h2 className="font-display text-2xl font-bold mb-1 transition-colors">
                                             {project.title}
                                         </h2>
                                         <p className="text-sm text-[var(--color-brand-muted)] mb-4">{project.subtitle}</p>
@@ -116,13 +106,13 @@ export default function ProjectsPage() {
                                     </div>
                                 </motion.div>
                             </Link>
-                        </FadeIn>
+                        </Reveal>
                     );
                 })}
             </div>
 
             {/* CTA */}
-            <FadeIn delay={0.3}>
+            <Reveal delay={0.3}>
                 <div className="mt-16 text-center">
                     <p className="text-[var(--color-brand-muted)] mb-4">Looking to see more or collaborate?</p>
                     <div className="flex justify-center gap-4">
@@ -136,13 +126,14 @@ export default function ProjectsPage() {
                         </a>
                         <Link
                             href="/contact"
-                            className="inline-flex items-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-6 py-2.5 rounded-full transition-all text-sm"
+                            className="inline-flex items-center gap-2 bg-gold-500 hover:bg-gold-400 text-black font-semibold px-6 py-2.5 rounded-full transition-all text-sm"
                         >
                             Work Together
                         </Link>
                     </div>
                 </div>
-            </FadeIn>
+            </Reveal>
+            </div>
         </div>
     );
 }

@@ -4,11 +4,11 @@ import * as React from "react";
 import { useMotionValue, useSpring, useTransform } from "framer-motion";
 
 /**
- * Cursor-driven 3D tilt: rotateX/rotateY follow the pointer position within
+ * Pointer-driven 3D tilt: rotateX/rotateY follow the pointer position within
  * the element, plus a radial glare that tracks the same point. Disabled for
  * touch input (no hover) and prefers-reduced-motion.
  */
-export function useTilt() {
+export function useTilt(intensity = 10) {
     const ref = React.useRef<HTMLElement>(null);
     const [enabled, setEnabled] = React.useState(false);
 
@@ -33,26 +33,26 @@ export function useTilt() {
 
     const glareBackground = useTransform(
         [glareX, glareY],
-        (values: number[]) => `radial-gradient(circle at ${values[0]}% ${values[1]}%, rgba(56,189,248,0.18), transparent 60%)`
+        (values: number[]) => `radial-gradient(circle at ${values[0]}% ${values[1]}%, rgba(214,168,79,0.2), transparent 60%)`
     );
 
     const handlers = {
-        onMouseMove: (e: React.MouseEvent) => {
+        onPointerMove: (event: React.PointerEvent) => {
             if (!enabled || !ref.current) return;
             const rect = ref.current.getBoundingClientRect();
-            const px = (e.clientX - rect.left) / rect.width;
-            const py = (e.clientY - rect.top) / rect.height;
-            ry.set((px - 0.5) * 10);
-            rx.set((0.5 - py) * 10);
+            const px = (event.clientX - rect.left) / rect.width;
+            const py = (event.clientY - rect.top) / rect.height;
+            ry.set((px - 0.5) * intensity);
+            rx.set((0.5 - py) * intensity);
             glareX.set(px * 100);
             glareY.set(py * 100);
         },
-        onMouseEnter: () => {
+        onPointerEnter: () => {
             if (!enabled) return;
             lift.set(-8);
             glareOpacity.set(1);
         },
-        onMouseLeave: () => {
+        onPointerLeave: () => {
             rx.set(0);
             ry.set(0);
             lift.set(0);
@@ -60,7 +60,14 @@ export function useTilt() {
         },
     };
 
-    const style = { rotateX: srx, rotateY: sry, y: slift, transformPerspective: 800 };
+    const style = {
+        rotateX: srx,
+        rotateY: sry,
+        y: slift,
+        transformPerspective: 900,
+        transformStyle: "preserve-3d" as const,
+        willChange: "transform",
+    };
 
     return { ref, handlers, style, glareBackground, glareOpacity: sGlareOpacity };
 }

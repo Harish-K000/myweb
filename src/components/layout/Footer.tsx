@@ -30,7 +30,7 @@ export default function Footer() {
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
                     {/* Brand */}
                     <div className="space-y-2">
-                        <Link href="/" className="font-bold text-lg text-[var(--color-brand-text)] hover:text-cyan-400 transition-colors">
+                        <Link href="/" className="font-display font-bold text-lg text-[var(--color-brand-text)] hover:text-[var(--color-brand-primary)] transition-colors">
                             {PORTFOLIO_DATA.profile.name}.
                         </Link>
                         <p className="text-[var(--color-brand-muted)] max-w-xs text-xs leading-relaxed">
@@ -40,10 +40,10 @@ export default function Footer() {
 
                     {/* Nav Links */}
                     <nav className="flex gap-8 text-[var(--color-brand-muted)]">
-                        <Link href="/projects" className="hover:text-cyan-400 transition-colors">Projects</Link>
-                        <Link href="/about" className="hover:text-cyan-400 transition-colors">About</Link>
-                        <Link href="/contact" className="hover:text-cyan-400 transition-colors">Contact</Link>
-                        <Link href="/resume" className="hover:text-cyan-400 transition-colors">Resume</Link>
+                        <Link href="/projects" className="hover:text-[var(--color-brand-primary)] transition-colors">Projects</Link>
+                        <Link href="/about" className="hover:text-[var(--color-brand-primary)] transition-colors">About</Link>
+                        <Link href="/contact" className="hover:text-[var(--color-brand-primary)] transition-colors">Contact</Link>
+                        <Link href="/resume" className="hover:text-[var(--color-brand-primary)] transition-colors">Resume</Link>
                     </nav>
 
                     {/* Socials */}
@@ -57,7 +57,7 @@ export default function Footer() {
                                     target={s.external ? "_blank" : undefined}
                                     rel={s.external ? "noreferrer" : undefined}
                                     aria-label={s.label}
-                                    className="flex items-center justify-center w-9 h-9 rounded-full border border-[var(--color-brand-border)] text-[var(--color-brand-muted)] hover:text-cyan-400 hover:border-cyan-400/40 transition-all"
+                                    className="flex items-center justify-center w-9 h-9 rounded-full border border-[var(--color-brand-border)] text-[var(--color-brand-muted)] hover:text-[var(--color-brand-primary)] hover:border-[var(--color-brand-primary)]/40 transition-all"
                                 >
                                     <Icon className="w-4 h-4" />
                                 </a>
@@ -70,7 +70,7 @@ export default function Footer() {
                     <p>© {new Date().getFullYear()} {PORTFOLIO_DATA.profile.name}. All rights reserved.</p>
                     <a
                         href={PORTFOLIO_DATA.profile.social.email}
-                        className="flex items-center gap-1 hover:text-cyan-400 transition-colors"
+                        className="flex items-center gap-1 hover:text-[var(--color-brand-primary)] transition-colors"
                     >
                         Open to opportunities <ArrowUpRight className="w-3 h-3" />
                     </a>

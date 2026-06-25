@@ -8,11 +8,11 @@ import clsx from "clsx";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 
 const NAV_LINKS = [
-  { name: "Journey", href: "/#pipeline" },
-  { name: "Experience", href: "/#experience" },
-  { name: "Projects", href: "/#projects" },
-  { name: "Tech", href: "/#skills" },
-  { name: "Contact", href: "/#contact" },
+  { name: "About", href: "/#forge" },
+  { name: "Experience", href: "/#path" },
+  { name: "Projects", href: "/#quests" },
+  { name: "Skills", href: "/#grimoire" },
+  { name: "Contact", href: "/#portal" },
 ];
 
 export default function Header() {
@@ -37,7 +37,7 @@ export default function Header() {
         className={clsx(
           "fixed top-0 w-full z-50 transition-all duration-300",
           scrolled
-            ? "backdrop-blur-xl site-header shadow-lg shadow-black/10"
+            ? "backdrop-blur-xl site-header shadow-lg shadow-black/20"
             : "bg-transparent"
         )}
       >
@@ -45,9 +45,9 @@ export default function Header() {
           {/* Logo */}
           <Link
             href="/"
-            className="font-mono-ui font-bold text-lg tracking-tight text-[var(--color-brand-text)] hover:text-cyan-400 transition-colors"
+            className="font-display font-bold text-lg tracking-tight text-[var(--color-brand-text)] hover:text-[var(--color-brand-primary)] transition-colors"
           >
-            HK<span className="text-cyan-400">.DEV</span>
+            HK
           </Link>
 
           {/* Desktop Nav */}
@@ -57,18 +57,19 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 className={clsx(
-                  "font-mono-ui text-xs uppercase tracking-[0.15em] transition-colors hover:text-cyan-400 relative group",
+                  "font-display text-xs uppercase tracking-[0.18em] transition-colors hover:text-[var(--color-brand-primary)] relative group",
                   pathname === link.href
-                    ? "text-cyan-400"
+                    ? "text-[var(--color-brand-primary)]"
                     : "text-[var(--color-brand-muted)]"
                 )}
               >
                 {link.name}
                 <span
                   className={clsx(
-                    "absolute -bottom-1 left-0 h-[2px] bg-cyan-400 rounded-full transition-all duration-300",
+                    "absolute -bottom-1 left-0 h-[2px] rounded-full transition-all duration-300",
                     pathname === link.href ? "w-full" : "w-0 group-hover:w-full"
                   )}
+                  style={{ background: "var(--color-brand-primary)" }}
                 />
               </Link>
             ))}
@@ -78,11 +79,12 @@ export default function Header() {
           <div className="flex items-center gap-3">
             <ThemeToggle />
             <a
-              href="/#contact"
+              href="/#portal"
               id="header-hire-btn"
-              className="hidden sm:flex items-center gap-1.5 font-mono-ui text-xs uppercase tracking-[0.15em] border border-cyan-400/40 text-cyan-400 hover:bg-cyan-400/10 px-4 py-2 rounded-md transition-colors"
+              className="hidden sm:flex items-center gap-1.5 font-display text-xs uppercase tracking-[0.15em] border px-4 py-2 rounded-md transition-colors"
+              style={{ borderColor: "rgba(214,168,79,0.4)", color: "var(--color-brand-primary)" }}
             >
-              <span>Hire Me</span>
+              <span>Work With Me</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
             </a>
 
@@ -117,9 +119,9 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 className={clsx(
-                  "block text-lg font-medium py-2 transition-colors hover:text-cyan-400",
+                  "block font-display text-lg py-2 transition-colors hover:text-[var(--color-brand-primary)]",
                   pathname === link.href
-                    ? "text-cyan-400"
+                    ? "text-[var(--color-brand-primary)]"
                     : "text-[var(--color-brand-text)]"
                 )}
               >
@@ -127,10 +129,11 @@ export default function Header() {
               </Link>
             ))}
             <a
-              href="/#contact"
-              className="flex items-center gap-1.5 mt-2 font-mono-ui text-sm uppercase tracking-[0.15em] py-2 text-cyan-400"
+              href="/#portal"
+              className="flex items-center gap-1.5 mt-2 font-display text-sm uppercase tracking-[0.15em] py-2"
+              style={{ color: "var(--color-brand-primary)" }}
             >
-              Hire Me
+              Work With Me
               <ArrowUpRight className="w-3.5 h-3.5" />
             </a>
           </nav>
