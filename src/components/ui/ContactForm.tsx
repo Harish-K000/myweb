@@ -5,148 +5,180 @@ import { Send, CheckCircle2, AlertCircle } from "lucide-react";
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
-type ContactFormProps = {
-    className?: string;
-};
+export default function ContactForm({ className = "" }: { className?: string }) {
+  const [formState, setFormState] = useState<FormState>("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
-export default function ContactForm({ className = "" }: ContactFormProps) {
-    const [formState, setFormState] = useState<FormState>("idle");
-    const [errorMessage, setErrorMessage] = useState<string>("");
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setFormState("submitting");
+    setErrorMessage("");
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        setFormState("submitting");
-        setErrorMessage("");
-
-        const formData = new FormData(event.currentTarget);
-        const payload = {
-            name: String(formData.get("name") ?? "").trim(),
-            email: String(formData.get("email") ?? "").trim(),
-            message: String(formData.get("message") ?? "").trim(),
-        };
-
-        try {
-            const response = await fetch("/api/contact", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
-            });
-
-            if (!response.ok) {
-                const data = await response.json().catch(() => ({}));
-                throw new Error(data?.error ?? "Unable to send message.");
-            }
-
-            setFormState("success");
-            (event.target as HTMLFormElement).reset();
-        } catch (error) {
-            setFormState("error");
-            setErrorMessage(error instanceof Error ? error.message : "Something went wrong.");
-        }
+    const fd = new FormData(e.currentTarget);
+    const payload = {
+      name:    String(fd.get("name")    ?? "").trim(),
+      email:   String(fd.get("email")   ?? "").trim(),
+      message: String(fd.get("message") ?? "").trim(),
     };
 
-    if (formState === "success") {
-        return (
-            <div className="flex flex-col items-center justify-center py-10 gap-4 text-center">
-                <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
-                    <CheckCircle2 className="w-7 h-7 text-emerald-400" />
-                </div>
-                <div>
-                    <p className="text-lg font-semibold text-[var(--color-brand-text)]">Message sent!</p>
-                    <p className="text-sm text-[var(--color-brand-muted)] mt-1">
-                        I&apos;ll get back to you within 48 hours.
-                    </p>
-                </div>
-                <button
-                    type="button"
-                    onClick={() => setFormState("idle")}
-                    className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors underline underline-offset-2"
-                >
-                    Send another message
-                </button>
-            </div>
-        );
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error ?? "Unable to send message.");
+      }
+      setFormState("success");
+      (e.target as HTMLFormElement).reset();
+    } catch (err) {
+      setFormState("error");
+      setErrorMessage(err instanceof Error ? err.message : "Something went wrong.");
     }
+  };
 
+  if (formState === "success") {
     return (
-        <div className={className}>
-            <form onSubmit={handleSubmit} className="space-y-4 text-left" noValidate>
-                {/* Name */}
-                <div>
-                    <label htmlFor="contact-name" className="block font-mono-ui text-xs uppercase tracking-[0.15em] text-cyan-400/80 mb-1.5">
-                        NAME_INPUT
-                    </label>
-                    <input
-                        type="text"
-                        id="contact-name"
-                        name="name"
-                        placeholder="Your name"
-                        className="w-full input-surface border rounded-md px-4 py-3 text-sm font-mono-ui focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 transition-all placeholder:text-[var(--color-brand-muted)]/50"
-                        disabled={formState === "submitting"}
-                    />
-                </div>
-
-                {/* Email */}
-                <div>
-                    <label htmlFor="contact-email" className="block font-mono-ui text-xs uppercase tracking-[0.15em] text-cyan-400/80 mb-1.5">
-                        EMAIL_INPUT <span className="text-cyan-400">*</span>
-                    </label>
-                    <input
-                        type="email"
-                        id="contact-email"
-                        name="email"
-                        required
-                        placeholder="your@email.com"
-                        className="w-full input-surface border rounded-md px-4 py-3 text-sm font-mono-ui focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 transition-all placeholder:text-[var(--color-brand-muted)]/50"
-                        disabled={formState === "submitting"}
-                    />
-                </div>
-
-                {/* Message */}
-                <div>
-                    <label htmlFor="contact-message" className="block font-mono-ui text-xs uppercase tracking-[0.15em] text-cyan-400/80 mb-1.5">
-                        MESSAGE_INPUT <span className="text-cyan-400">*</span>
-                    </label>
-                    <textarea
-                        id="contact-message"
-                        name="message"
-                        required
-                        rows={5}
-                        placeholder="What are you building?"
-                        className="w-full input-surface border rounded-md px-4 py-3 text-sm font-mono-ui focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 transition-all placeholder:text-[var(--color-brand-muted)]/50 resize-none"
-                        disabled={formState === "submitting"}
-                    />
-                </div>
-
-                {/* Error state */}
-                {formState === "error" && (
-                    <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
-                        <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                        {errorMessage}
-                    </div>
-                )}
-
-                {/* Submit */}
-                <button
-                    type="submit"
-                    id="contact-submit-btn"
-                    disabled={formState === "submitting"}
-                    className="w-full flex items-center justify-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-black font-mono-ui text-sm font-bold uppercase tracking-[0.1em] py-3.5 rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-2"
-                >
-                    {formState === "submitting" ? (
-                        <>
-                            <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                            Sending...
-                        </>
-                    ) : (
-                        <>
-                            <Send className="w-4 h-4" /> Send Message
-                        </>
-                    )}
-                </button>
-            </form>
+      <div className="flex flex-col items-center justify-center py-12 gap-4 text-center">
+        <div
+          className="w-14 h-14 rounded-2xl flex items-center justify-center"
+          style={{ background: "var(--green-dim)", border: "1px solid rgba(34,197,94,0.25)" }}
+        >
+          <CheckCircle2 size={26} style={{ color: "var(--green)" }} />
         </div>
+        <div>
+          <p className="text-base font-semibold" style={{ color: "var(--text)" }}>
+            Message sent!
+          </p>
+          <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>
+            I&apos;ll get back to you within 48 hours.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setFormState("idle")}
+          className="text-sm font-medium cursor-pointer transition-opacity duration-200 hover:opacity-70"
+          style={{ color: "var(--text-muted)" }}
+        >
+          Send another message
+        </button>
+      </div>
     );
+  }
+
+  const inputStyle: React.CSSProperties = {
+    background: "var(--bg-raised)",
+    border: "1px solid var(--border)",
+    borderRadius: "10px",
+    color: "var(--text)",
+    width: "100%",
+    padding: "12px 16px",
+    fontSize: "0.875rem",
+    outline: "none",
+    transition: "border-color 0.2s ease",
+  };
+
+  const labelStyle: React.CSSProperties = {
+    display: "block",
+    fontSize: "0.7rem",
+    fontFamily: "'JetBrains Mono', monospace",
+    letterSpacing: "0.15em",
+    textTransform: "uppercase",
+    color: "var(--text-muted)",
+    marginBottom: "8px",
+  };
+
+  return (
+    <div className={className}>
+      <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+        <div>
+          <label htmlFor="cf-name" style={labelStyle}>Name</label>
+          <input
+            type="text"
+            id="cf-name"
+            name="name"
+            placeholder="Your name"
+            style={inputStyle}
+            onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = "var(--border-strong)"; }}
+            onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = "var(--border)"; }}
+            disabled={formState === "submitting"}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="cf-email" style={labelStyle}>
+            Email <span style={{ color: "var(--text-subtle)" }}>*</span>
+          </label>
+          <input
+            type="email"
+            id="cf-email"
+            name="email"
+            required
+            placeholder="your@email.com"
+            style={inputStyle}
+            onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = "var(--border-strong)"; }}
+            onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = "var(--border)"; }}
+            disabled={formState === "submitting"}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="cf-message" style={labelStyle}>
+            Message <span style={{ color: "var(--text-subtle)" }}>*</span>
+          </label>
+          <textarea
+            id="cf-message"
+            name="message"
+            required
+            rows={5}
+            placeholder="What are you building?"
+            style={{ ...inputStyle, resize: "none" }}
+            onFocus={(e) => { (e.target as HTMLTextAreaElement).style.borderColor = "var(--border-strong)"; }}
+            onBlur={(e) => { (e.target as HTMLTextAreaElement).style.borderColor = "var(--border)"; }}
+            disabled={formState === "submitting"}
+          />
+        </div>
+
+        {formState === "error" && (
+          <div
+            className="flex items-center gap-2 text-sm px-4 py-3 rounded-xl"
+            style={{
+              background: "var(--red-dim)",
+              border: "1px solid rgba(239,68,68,0.25)",
+              color: "var(--red)",
+            }}
+          >
+            <AlertCircle size={15} className="shrink-0" />
+            {errorMessage}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={formState === "submitting"}
+          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold text-sm cursor-pointer transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{
+            background: "var(--cta-bg)",
+            color: "var(--cta-text)",
+          }}
+          onMouseEnter={(e) => { if (formState !== "submitting") (e.currentTarget as HTMLElement).style.background = "var(--cta-hover)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "var(--cta-bg)"; }}
+        >
+          {formState === "submitting" ? (
+            <>
+              <span className="w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />
+              Sending…
+            </>
+          ) : (
+            <>
+              <Send size={15} />
+              Send Message
+            </>
+          )}
+        </button>
+      </form>
+    </div>
+  );
 }

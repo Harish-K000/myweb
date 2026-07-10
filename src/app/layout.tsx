@@ -72,9 +72,7 @@ export default function RootLayout({
         (function () {
             try {
                 var stored = localStorage.getItem("theme");
-                var theme = stored === "light" || stored === "dark"
-                    ? stored
-                    : (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+                var theme = stored === "light" || stored === "dark" ? stored : "dark";
                 document.documentElement.dataset.theme = theme;
                 document.documentElement.style.colorScheme = theme;
             } catch (e) {}
@@ -92,7 +90,7 @@ export default function RootLayout({
             </head>
             <body className="antialiased">
                 <Header />
-                <main className="min-h-screen pt-16">
+                <main className="min-h-screen">
                     {children}
                 </main>
                 <Footer />
