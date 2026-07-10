@@ -32,9 +32,9 @@ export interface EducationItem {
 export const PORTFOLIO_DATA = {
     profile: {
         name: "Harish K",
-        title: "Software Developer | Python, Azure & AI Engineer",
-        tagline: "Software Developer with 3+ years building scalable web apps, APIs, and cloud-based enterprise solutions.",
-        summary: "Software Developer with 3+ years of experience building scalable web applications, APIs, and cloud-based enterprise solutions. Skilled in Python, JavaScript/TypeScript, React, Spring Boot, SQL, Azure/AWS, Docker, and CI/CD. Hands-on with AI/Generative AI concepts, prompt engineering, and LLM applications.",
+        title: "Software Engineer | Full-Stack, Agentic AI & Cloud Systems",
+        tagline: "Software Engineer with 3+ years shipping production systems — now applying that full-stack, cloud-native foundation to agentic LLM automation and applied ML research.",
+        summary: "Software engineer with 3+ years of production experience across full-stack development, cloud infrastructure, and applied ML research. Built enterprise-grade Spring Boot microservices and React applications serving 8,000+ users, AWS-based CI/CD pipelines, and RESTful APIs integrating multiple systems. Specializes in agentic LLM systems — autonomous agents with tool calling, multi-step workflow orchestration, and safety verification — alongside hands-on ML pipeline development and validation on research datasets. Comfortable across the stack, from relational database design to model training to production deployment, with a track record of Agile delivery, code review, and cross-functional collaboration.",
         social: {
             github: "https://github.com/Harish-K000",
             linkedin: "https://www.linkedin.com/in/harish-kannan-95811918b/",
@@ -61,15 +61,26 @@ export const PORTFOLIO_DATA = {
     ],
     experience: [
         {
-            id: "job-1",
-            role: "Research Assistant",
-            company: "Wilfrid Laurier University",
-            period: "Sept 2024 – Dec 2025",
+            id: "job-siemens",
+            role: "Software Developer",
+            company: "Siemens (Canada)",
+            period: "Nov 2025 – Present",
             description: [
-                "Conducted research on multimedia communication systems and federated learning for next-generation wireless networks.",
-                "Co-authored two papers: Mulsemedia Communication Systems and Joint Optimization of IRS Configuration and Spectrum Access via Federated Multi-Agent SAC in CRNs.",
-                "Developed Python simulation pipelines for real-time data analysis and model evaluation; improved model convergence by 25% through optimized preprocessing.",
-                "Collaborated with professors to produce IEEE-style research manuscripts with diagrams, graphs, and analytical insights.",
+                "Designed and integrated 6 Spring Boot REST APIs for a SaaS platform, automating manual data workflows and reducing internal processing effort by ~3 hours per week.",
+                "Migrated 3 legacy modules into independently deployable AWS-based microservices, improving deployment frequency from bi-weekly releases to on-demand.",
+                "Built GitHub Actions/Docker CI/CD pipelines that cut environment setup from 2 hours to under 20 minutes, and increased automated test coverage from 54% to 81% with JUnit and Cypress.",
+                "Delivered 2 major releases with zero critical post-release defects, collaborating in a 9-member Agile team through sprint planning, estimation, and peer code review.",
+            ],
+        },
+        {
+            id: "job-1",
+            role: "Research Assistant — AI & Machine Learning",
+            company: "Wilfrid Laurier University",
+            period: "Jan 2025 – Present",
+            description: [
+                "Developed object-oriented Python data-processing and simulation pipelines for AI and wireless-networking research, building repeatable automated workflows for model training, evaluation, and experiment tracking.",
+                "Implemented and validated machine learning model pipelines across 1–2GB research datasets, optimizing preprocessing and improving model convergence by ~25%.",
+                "Co-authored 3 IEEE/SSRN research papers spanning blockchain, multimedia communication systems, and federated multi-agent optimization in cognitive radio networks (FMASAC), designing reproducible experimental methodologies with faculty researchers.",
             ],
         },
         {
@@ -105,11 +116,32 @@ export const PORTFOLIO_DATA = {
         },
     ] as EducationItem[],
     certifications: [
+        "Machine Learning for All — Coursera",
         "Career Essentials in Generative AI — Microsoft & LinkedIn Learning (2026)",
         "Red Hat Certified System Administrator (RHCSA)",
         "Programming for Everybody (Getting Started with Python) — Coursera",
     ],
     projects: [
+        {
+            id: "agentic-browser-automation",
+            title: "Agentic AI Workflow Automation System",
+            subtitle: "Autonomous LLM agent for end-to-end job applications",
+            description: "An autonomous LLM agent that completes multi-step job applications end-to-end across Workday, Greenhouse, and Lever ATS platforms.",
+            problem: "Job seekers repeatedly lose hours manually filling out near-identical application forms across many ATS platforms.",
+            solution: "Built a perception-action-verification agent over Chrome DevTools Protocol combining accessibility-tree snapshots, vision-assisted numbered screenshots, and shadow DOM/iframe traversal for self-healing across React re-renders. Engineered structured tool calling across a 12-tool action space, provider-agnostic LLM integration (AWS Bedrock, Ollama, NVIDIA) with layout-fingerprint action caching, safety gates blocking sensitive fields and final submission, and a unit + browser integration test suite.",
+            techStack: ["Python", "TypeScript", "LLM Tool Calling", "Chrome DevTools Protocol", "AWS Bedrock"],
+            metrics: [],
+        },
+        {
+            id: "predictive-diabetes-analytics",
+            title: "Predictive Analytics for Diabetes",
+            subtitle: "ML risk-scoring pipeline + clinical dashboard",
+            description: "A diabetes risk classification model served through a REST API with a clinician-facing dashboard.",
+            problem: "Clinical staff needed an accessible way to surface diabetes risk scores from patient data without a data-science background.",
+            solution: "Trained a classification model in scikit-learn and XGBoost on 50,000+ patient records, then served predictions through a Flask REST API with sub-200ms average response times, with a React.js dashboard surfacing model outputs to non-technical clinical staff.",
+            techStack: ["Python", "scikit-learn", "XGBoost", "Flask", "React"],
+            metrics: ["85% accuracy on risk classification", "Sub-200ms average API response time"],
+        },
         {
             id: "depth-training-website",
             title: "Depth Training & Physiotherapy",
@@ -129,16 +161,6 @@ export const PORTFOLIO_DATA = {
             solution: "Built a microservices-based prioritization system in Spring Boot and Node.js, with Twilio-powered SMS notifications and fault-tolerant, distributed components across multiple service nodes.",
             techStack: ["Spring Boot", "Node.js", "Twilio", "Microservices"],
             metrics: ["~30% reduction in average wait times", "~25% fewer missed appointments (test scenarios)", "99.5% uptime across 3 service nodes under load testing"],
-        },
-        {
-            id: "agentic-browser-automation",
-            title: "Agentic Browser Automation",
-            subtitle: "AI agent for autonomous job-application workflows",
-            description: "An AI-powered browser agent that autonomously navigates and completes online job applications.",
-            problem: "Job seekers repeatedly lose hours manually filling out near-identical application forms across many sites.",
-            solution: "Built a perception-action-verification agent using Chrome DevTools Protocol, accessibility-tree analysis, and prompt-engineered tool-calling for autonomous form filling, document uploads, and intelligent error recovery — with safety controls and action caching to prevent unintended submissions.",
-            techStack: ["Python", "TypeScript", "LLM Tool Calling", "Chrome DevTools Protocol"],
-            metrics: [],
         },
         {
             id: "translate-ease",

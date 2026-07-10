@@ -1,11 +1,15 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform, useSpring, useInView, useReducedMotion, useMotionValue, useMotionValueEvent, AnimatePresence, type MotionValue } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useInView, useReducedMotion, useMotionValue, useMotionValueEvent, useAnimationFrame, AnimatePresence, type MotionValue } from "framer-motion";
 import { ArrowRight, ExternalLink, Github, MapPin, Mail, Phone, Linkedin } from "lucide-react";
 import { PORTFOLIO_DATA, type ProjectItem } from "@/data/portfolio";
 import ContactForm from "@/components/ui/ContactForm";
 import MagneticWrapper from "@/components/ui/MagneticWrapper";
+import HeroLaptop from "@/components/ui/HeroLaptop";
+import ScrollThread from "@/components/ui/ScrollThread";
+import CinematicOverlay from "@/components/ui/CinematicOverlay";
+import { ScrollFxProvider, useScrollFx } from "@/lib/scroll-fx";
 
 /* ─────────────────────────────────────────────
    ANIMATION HELPERS
@@ -106,162 +110,6 @@ function ScrollProgress() {
       className="fixed top-0 left-0 right-0 h-px z-[100] origin-left"
       style={{ scaleX, background: "var(--text)" }}
     />
-  );
-}
-
-/* ─────────────────────────────────────────────
-   HERO WORKSTATION
-   ───────────────────────────────────────────── */
-function HeroWorkstation({ scrollY }: { scrollY: MotionValue<number> }) {
-  const [mx, setMx] = useState(0);
-  const [my, setMy] = useState(0);
-  const rm = !!useReducedMotion();
-
-  useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      setMx(e.clientX - window.innerWidth / 2);
-      setMy(e.clientY - window.innerHeight / 2);
-    };
-    window.addEventListener("mousemove", onMove);
-    return () => window.removeEventListener("mousemove", onMove);
-  }, []);
-
-  /* Badge parallax — each badge at a distinct scroll speed to simulate Z depth.
-     Hooks must be called unconditionally; rm zeros the output range instead. */
-  const b0y = useTransform(scrollY, [0, 500], [0, rm ? 0 : -60]);
-  const b1y = useTransform(scrollY, [0, 500], [0, rm ? 0 : -90]);
-  const b2y = useTransform(scrollY, [0, 500], [0, rm ? 0 : -72]);
-  const b3y = useTransform(scrollY, [0, 500], [0, rm ? 0 : -50]);
-  const b4y = useTransform(scrollY, [0, 500], [0, rm ? 0 : -82]);
-  const b5y = useTransform(scrollY, [0, 500], [0, rm ? 0 : -66]);
-  const bs0 = useSpring(b0y, { stiffness: 75, damping: 26 });
-  const bs1 = useSpring(b1y, { stiffness: 62, damping: 22 });
-  const bs2 = useSpring(b2y, { stiffness: 70, damping: 24 });
-  const bs3 = useSpring(b3y, { stiffness: 58, damping: 20 });
-  const bs4 = useSpring(b4y, { stiffness: 72, damping: 24 });
-  const bs5 = useSpring(b5y, { stiffness: 64, damping: 22 });
-  const badgeYs = [bs0, bs1, bs2, bs3, bs4, bs5];
-
-  const badges = [
-    { label: "React",       x: "-62%", y: "12%",  delay: 0.1,  float: "float-slow" },
-    { label: "TypeScript",  x: "104%", y: "8%",   delay: 0.2,  float: "float-medium" },
-    { label: "Python",      x: "-55%", y: "64%",  delay: 0.35, float: "float-fast" },
-    { label: "Azure",       x: "108%", y: "58%",  delay: 0.15, float: "float-slow" },
-    { label: "Docker",      x: "-40%", y: "105%", delay: 0.25, float: "float-medium" },
-    { label: "Spring Boot", x: "90%",  y: "100%", delay: 0.3,  float: "float-fast" },
-  ];
-
-  return (
-    <div className="relative w-full max-w-[560px] mx-auto select-none" style={{ aspectRatio: "4/3" }}>
-      {badges.map(({ label, x, y, delay, float: floatClass }, idx) => (
-        <motion.div
-          key={label}
-          className={`absolute ${floatClass}`}
-          style={{ left: x, top: y, y: badgeYs[idx] }}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay, ease }}
-        >
-          <div
-            className="px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap"
-            style={{
-              background: "var(--bg-surface)",
-              border: "1px solid var(--border-hover)",
-              color: "var(--text-2)",
-            }}
-          >
-            {label}
-          </div>
-        </motion.div>
-      ))}
-
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.75, delay: 0.3, ease }}
-        className="w-full h-full rounded-2xl overflow-hidden"
-        style={{
-          background: "var(--bg-surface)",
-          border: "1px solid var(--border-hover)",
-          transform: `perspective(1100px) rotateY(${-4 + mx * 0.004}deg) rotateX(${1.5 + my * -0.003}deg)`,
-          transition: "transform 0.14s ease-out",
-        }}
-      >
-        {/* Window chrome */}
-        <div
-          className="flex items-center gap-2 px-4 py-3"
-          style={{ borderBottom: "1px solid var(--border)", background: "var(--bg-raised)" }}
-        >
-          <div className="w-3 h-3 rounded-full" style={{ background: "var(--red)" }} />
-          <div className="w-3 h-3 rounded-full" style={{ background: "var(--amber)" }} />
-          <div className="w-3 h-3 rounded-full" style={{ background: "var(--green)" }} />
-          <span className="ml-2 text-xs" style={{ fontFamily: "var(--font-mono)", color: "var(--text-subtle)" }}>
-            workshop.ts
-          </span>
-          <div className="ml-auto flex items-center gap-1.5">
-            <span className="status-dot" />
-            <span className="text-xs" style={{ color: "var(--green)" }}>LIVE</span>
-          </div>
-        </div>
-
-        {/* Code body */}
-        <div className="p-5 text-xs leading-7" style={{ fontFamily: "var(--font-mono)" }}>
-          <div style={{ color: "var(--text-subtle)" }}>
-            <span style={{ color: "var(--text-muted)" }}>const</span>
-            <span style={{ color: "var(--text-2)" }}> system</span>
-            <span> = </span>
-            <span style={{ color: "var(--text-muted)" }}>await</span>
-            <span style={{ color: "var(--text-2)" }}> buildStack</span>
-            <span>({"{"}</span>
-          </div>
-          <div className="pl-5" style={{ color: "var(--text-subtle)" }}>
-            <span style={{ color: "var(--text-muted)" }}>frontend</span>
-            <span>: </span>
-            <span style={{ color: "var(--text-2)" }}>&quot;React + Next.js&quot;</span><span>,</span>
-          </div>
-          <div className="pl-5" style={{ color: "var(--text-subtle)" }}>
-            <span style={{ color: "var(--text-muted)" }}>api</span>
-            <span>: </span>
-            <span style={{ color: "var(--text-2)" }}>&quot;Spring Boot + Node&quot;</span><span>,</span>
-          </div>
-          <div className="pl-5" style={{ color: "var(--text-subtle)" }}>
-            <span style={{ color: "var(--text-muted)" }}>cloud</span>
-            <span>: </span>
-            <span style={{ color: "var(--text-2)" }}>&quot;Azure + Docker&quot;</span><span>,</span>
-          </div>
-          <div className="pl-5" style={{ color: "var(--text-subtle)" }}>
-            <span style={{ color: "var(--text-muted)" }}>uptime</span>
-            <span>: </span>
-            <span style={{ color: "var(--text-2)" }}>99.9</span><span>,</span>
-          </div>
-          <div style={{ color: "var(--text-subtle)" }}>{"});"}</div>
-          <div className="mt-4" style={{ color: "var(--text-subtle)" }}>
-            <span style={{ color: "var(--text-muted)" }}>export default</span>
-            <span style={{ color: "var(--text-2)" }}> system</span><span>;</span>
-          </div>
-        </div>
-
-        {/* Status bar */}
-        <div
-          className="absolute bottom-0 left-0 right-0 flex items-center gap-4 px-5 py-2.5"
-          style={{ borderTop: "1px solid var(--border)", background: "var(--bg-raised)" }}
-        >
-          {[
-            { label: "Frontend", cls: "status-dot" },
-            { label: "API",      cls: "status-dot-amber" },
-            { label: "Cloud",    cls: "status-dot" },
-            { label: "CI",       cls: "status-dot" },
-          ].map(({ label, cls }) => (
-            <div key={label} className="flex items-center gap-1.5">
-              <span className={cls} />
-              <span className="text-xs" style={{ color: "var(--text-subtle)", fontFamily: "var(--font-mono)" }}>
-                {label}
-              </span>
-            </div>
-          ))}
-        </div>
-      </motion.div>
-    </div>
   );
 }
 
@@ -423,6 +271,18 @@ function CustomCursor() {
       />
     </>
   );
+}
+
+/* ─────────────────────────────────────────────
+   HERO DOT GRID
+   Same parallax as before, plus a faint brighten
+   on fast scroll — a first, quiet echo of the
+   thread's "camera whip" language.
+   ───────────────────────────────────────────── */
+function HeroDotGrid({ y }: { y: MotionValue<number> }) {
+  const { speed } = useScrollFx();
+  const opacity = useTransform(speed, (s) => 0.5 + s * 0.3);
+  return <motion.div className="absolute inset-0 dot-grid-bg" style={{ opacity, y }} />;
 }
 
 /* ─────────────────────────────────────────────
@@ -827,7 +687,7 @@ function ArchitectureStage() {
   const isProd = status === "PRODUCTION READY" || status === "SYSTEM ONLINE";
 
   return (
-    <div ref={ref} style={{ height: "500vh", background: "var(--bg)" }}>
+    <div id="architecture" ref={ref} style={{ height: "500vh", background: "var(--bg)" }}>
       <div
         className="sticky top-0 h-screen overflow-hidden"
         style={{ perspective: "1200px", perspectiveOrigin: "50% 50%" }}
@@ -1023,6 +883,446 @@ function ArchitectureStage() {
 }
 
 /* ─────────────────────────────────────────────
+   EXPERIENCE BLUEPRINT
+   Scroll-tracked timeline: a pulse of light travels
+   down the center spine while a canvas lattice in the
+   background morphs from a loose idea-graph into a
+   structured grid — research → build → production.
+   ───────────────────────────────────────────── */
+function smoothstep01(a: number, b: number, x: number) {
+  const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
+  return t * t * (3 - 2 * t);
+}
+
+function phaseColor(p: number) {
+  const research = 1 - smoothstep01(0, 0.42, p);
+  const transform = Math.max(0, 1 - Math.abs(p - 0.52) / 0.28);
+  const production = smoothstep01(0.58, 1, p);
+  const blue = [110, 160, 235];
+  const amber = [205, 160, 90];
+  const green = [95, 175, 130];
+  const graphite = [190, 195, 202];
+  const wSum = research + transform + production;
+  const base = 1 - Math.min(1, wSum);
+  let r = graphite[0] * base, g = graphite[1] * base, b = graphite[2] * base;
+  r += blue[0] * research + amber[0] * transform + green[0] * production;
+  g += blue[1] * research + amber[1] * transform + green[1] * production;
+  b += blue[2] * research + amber[2] * transform + green[2] * production;
+  return { r, g, b, research, transform, production };
+}
+
+interface LatticeNode { rx: number; ry: number; px: number; py: number; i: number }
+
+function buildLatticeNodes(): LatticeNode[] {
+  const hash = (n: number) => {
+    const x = Math.sin(n * 12.9898) * 43758.5453;
+    return x - Math.floor(x);
+  };
+  const list: LatticeNode[] = [];
+  let i = 0;
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 4; col++) {
+      const px = 0.16 + col * 0.227;
+      const py = 0.14 + row * 0.235;
+      const rx = Math.max(0.04, Math.min(0.96, 0.5 + (hash(i * 2.13 + 1) - 0.5)));
+      const ry = Math.max(0.05, Math.min(0.95, 0.5 + (hash(i * 3.71 + 2) - 0.5)));
+      list.push({ rx, ry, px, py, i });
+      i++;
+    }
+  }
+  return list;
+}
+
+function buildLatticeEdges(): [number, number][] {
+  const idx = (r: number, c: number) => r * 4 + c;
+  const e: [number, number][] = [];
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 4; col++) {
+      if (col < 3) e.push([idx(row, col), idx(row, col + 1)]);
+      if (row < 3) e.push([idx(row, col), idx(row + 1, col)]);
+    }
+  }
+  return e;
+}
+
+const LATTICE_NODES = buildLatticeNodes();
+const LATTICE_EDGES = buildLatticeEdges();
+
+/** Background canvas: construction lines + idea-graph/lattice + floating light points. */
+function ExperienceCanvas({
+  progressRef,
+  velocityRef,
+  rm,
+}: {
+  progressRef: React.MutableRefObject<number>;
+  velocityRef: React.MutableRefObject<number>;
+  rm: boolean;
+}) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const sizeRef = useRef({ w: 0, h: 0 });
+  const timeRef = useRef(0);
+
+  const draw = () => {
+    const canvas = canvasRef.current;
+    const { w, h } = sizeRef.current;
+    if (!canvas || !w) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.clearRect(0, 0, w, h);
+    const p = progressRef.current;
+    const t = timeRef.current;
+    const col = phaseColor(p);
+    const rgb = `${col.r | 0},${col.g | 0},${col.b | 0}`;
+    const lattice = smoothstep01(0.18, 0.92, p);
+    const drift = rm ? 0 : Math.sin(t * 0.12) * 6;
+
+    // Layer 1: deep architectural construction lines
+    ctx.save();
+    ctx.translate(0, drift * 0.3);
+    const skew = (1 - lattice) * 3.2;
+    [0.14, 0.38, 0.63, 0.86].forEach((fx, i) => {
+      const x = fx * w;
+      const angle = (i % 2 === 0 ? 1 : -1) * skew * (Math.PI / 180);
+      ctx.save();
+      ctx.translate(x, h / 2);
+      ctx.rotate(angle);
+      ctx.strokeStyle = `rgba(230,232,236,${0.035 + lattice * 0.03})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, -h / 2 - 80);
+      ctx.lineTo(0, h / 2 + 80);
+      ctx.stroke();
+      ctx.restore();
+    });
+    [0.32, 0.7].forEach((fy) => {
+      ctx.strokeStyle = `rgba(230,232,236,${col.production * 0.05})`;
+      ctx.beginPath();
+      ctx.moveTo(0, fy * h);
+      ctx.lineTo(w, fy * h);
+      ctx.stroke();
+    });
+    ctx.restore();
+
+    // Layer 2: idea graph -> engineering lattice
+    ctx.save();
+    ctx.translate(0, drift * 0.6);
+    const pos = LATTICE_NODES.map((n) => ({
+      x: (n.rx + (n.px - n.rx) * lattice) * w,
+      y: (n.ry + (n.py - n.ry) * lattice) * h,
+      n,
+    }));
+    const curveAmt = 1 - lattice;
+    LATTICE_EDGES.forEach(([a, b], ei) => {
+      const A = pos[a], B = pos[b];
+      const mx = (A.x + B.x) / 2, my = (A.y + B.y) / 2;
+      const dx = B.x - A.x, dy = B.y - A.y;
+      const len = Math.sqrt(dx * dx + dy * dy) || 1;
+      const nx = -dy / len, ny = dx / len;
+      const sign = ei % 2 === 0 ? 1 : -1;
+      const off = sign * curveAmt * 46;
+      ctx.strokeStyle = `rgba(220,224,230,${0.05 + lattice * 0.05})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(A.x, A.y);
+      ctx.quadraticCurveTo(mx + nx * off, my + ny * off, B.x, B.y);
+      ctx.stroke();
+    });
+    pos.forEach(({ x, y, n }) => {
+      const accent = n.i % 3 === 0;
+      const r = 1.6 + lattice * 1.2;
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(225,228,233,${0.35 + lattice * 0.25})`;
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+      if (accent) {
+        const grad = ctx.createRadialGradient(x, y, 0, x, y, 22);
+        grad.addColorStop(0, `rgba(${rgb},0.5)`);
+        grad.addColorStop(1, `rgba(${rgb},0)`);
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(x, y, 22, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+    ctx.restore();
+
+    // Layer 3: restrained floating points of light — stretch into streaks
+    // behind the scroll direction when the page is moving fast, so the same
+    // "camera whip" language from the global thread shows up here too.
+    if (!rm) {
+      const v = velocityRef.current;
+      const streak = Math.min(1, Math.abs(v) / 2200);
+      const dir = v >= 0 ? 1 : -1;
+      ctx.save();
+      for (let i = 0; i < 7; i++) {
+        const seed = i * 91.7;
+        const fx = Math.sin(seed) * 0.5 + 0.5;
+        const fy = Math.cos(seed * 1.3) * 0.5 + 0.5;
+        const bx = fx * w + Math.sin(t * 0.15 + i) * 14;
+        const by = fy * h + Math.cos(t * 0.12 + i * 1.7) * 14 + drift;
+        const pulse = 0.35 + 0.25 * Math.sin(t * 0.4 + i * 2.1);
+        if (streak > 0.04) {
+          ctx.strokeStyle = `rgba(${rgb},${0.4 * streak * pulse})`;
+          ctx.lineWidth = 1.4;
+          ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.moveTo(bx, by - dir * streak * 50);
+          ctx.lineTo(bx, by);
+          ctx.stroke();
+        }
+        const grad = ctx.createRadialGradient(bx, by, 0, bx, by, 16);
+        grad.addColorStop(0, `rgba(${rgb},${0.28 * pulse})`);
+        grad.addColorStop(1, `rgba(${rgb},0)`);
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(bx, by, 16, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(235,238,242,${0.5 * pulse})`;
+        ctx.arc(bx, by, 1.4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+  };
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      const ctx = canvas.getContext("2d");
+      ctx?.setTransform(dpr, 0, 0, dpr, 0, 0);
+      sizeRef.current = { w: rect.width, h: rect.height };
+      draw();
+    };
+    resize();
+    window.addEventListener("resize", resize);
+    return () => window.removeEventListener("resize", resize);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useAnimationFrame((t) => {
+    timeRef.current = t / 1000;
+    draw();
+  });
+
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />;
+}
+
+function ExperienceBlueprint() {
+  const rm = !!useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const pulseRef = useRef<HTMLDivElement>(null);
+  const trailRef = useRef<HTMLDivElement>(null);
+  const dotRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const glowRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const dotFractionsRef = useRef<number[]>([]);
+  const progressRef = useRef(0);
+  const velocityRef = useRef(0);
+
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
+  const { velocity } = useScrollFx();
+  useMotionValueEvent(velocity, "change", (v) => { velocityRef.current = v; });
+
+  const measureDots = () => {
+    const track = trackRef.current;
+    if (!track) return;
+    const trackRect = track.getBoundingClientRect();
+    const trackH = track.offsetHeight || 1;
+    dotFractionsRef.current = dotRefs.current.map((el) => {
+      if (!el) return 0;
+      const r = el.getBoundingClientRect();
+      const offset = r.top + r.height / 2 - trackRect.top;
+      return Math.max(0, Math.min(1, offset / trackH));
+    });
+  };
+
+  const applyDom = (p: number) => {
+    progressRef.current = p;
+    const col = phaseColor(p);
+    const rgb = `${col.r | 0}, ${col.g | 0}, ${col.b | 0}`;
+
+    const track = trackRef.current;
+    if (track) {
+      const y = p * track.offsetHeight;
+      if (pulseRef.current) {
+        pulseRef.current.style.top = `${y}px`;
+        pulseRef.current.style.background = `rgb(${rgb})`;
+        pulseRef.current.style.boxShadow = `0 0 8px 2px rgba(${rgb},0.9), 0 0 30px 10px rgba(${rgb},0.35)`;
+      }
+      if (trailRef.current) {
+        trailRef.current.style.top = `${y}px`;
+        trailRef.current.style.background = `linear-gradient(to top, rgba(${rgb},0.55), rgba(${rgb},0))`;
+      }
+    }
+
+    dotRefs.current.forEach((el, i) => {
+      if (!el) return;
+      const frac = dotFractionsRef.current[i] ?? 0;
+      if (p >= frac - 0.015) {
+        el.style.background = `rgba(${rgb}, 0.9)`;
+        el.style.borderColor = `rgba(${rgb}, 0.9)`;
+        el.style.boxShadow = `0 0 0 3px rgba(${rgb},0.12), 0 0 18px 2px rgba(${rgb},0.5)`;
+      } else {
+        el.style.background = "rgba(0,0,0,0.4)";
+        el.style.borderColor = "rgba(255,255,255,0.25)";
+        el.style.boxShadow = "none";
+      }
+    });
+
+    const weights = [col.research, col.transform, col.production];
+    glowRefs.current.forEach((el, i) => {
+      if (!el) return;
+      el.style.opacity = String(0.08 + weights[i] * 0.14);
+    });
+  };
+
+  useEffect(() => {
+    measureDots();
+    applyDom(scrollYProgress.get());
+    window.addEventListener("resize", measureDots);
+    return () => window.removeEventListener("resize", measureDots);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useMotionValueEvent(scrollYProgress, "change", applyDom);
+
+  return (
+    <section
+      id="experience"
+      ref={sectionRef}
+      className="relative py-28 px-6"
+      style={{ background: "var(--bg)", overflow: "hidden" }}
+    >
+      {/* Sticky background: drifting glows + lattice canvas */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="sticky top-0 h-screen w-full overflow-hidden">
+          <div
+            ref={(el) => { glowRefs.current[0] = el; }}
+            className="experience-glow"
+            style={{ top: "8%", left: "12%", width: 620, height: 620, filter: "blur(90px)", background: "radial-gradient(circle, rgba(110,160,235,0.9) 0%, rgba(110,160,235,0) 70%)", animation: rm ? "none" : "driftA 22s ease-in-out infinite" }}
+          />
+          <div
+            ref={(el) => { glowRefs.current[1] = el; }}
+            className="experience-glow"
+            style={{ top: "42%", right: "10%", width: 560, height: 560, filter: "blur(100px)", background: "radial-gradient(circle, rgba(205,160,90,0.9) 0%, rgba(205,160,90,0) 70%)", animation: rm ? "none" : "driftB 26s ease-in-out infinite" }}
+          />
+          <div
+            ref={(el) => { glowRefs.current[2] = el; }}
+            className="experience-glow"
+            style={{ bottom: "6%", left: "30%", width: 640, height: 640, filter: "blur(100px)", background: "radial-gradient(circle, rgba(95,175,130,0.9) 0%, rgba(95,175,130,0) 70%)", animation: rm ? "none" : "driftC 24s ease-in-out infinite" }}
+          />
+
+          <ExperienceCanvas progressRef={progressRef} velocityRef={velocityRef} rm={rm} />
+
+          <div
+            className="absolute inset-0"
+            style={{ background: "radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 78%, var(--bg) 100%)" }}
+          />
+        </div>
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto">
+        <SectionHead
+          eyebrow="03 — Architecture"
+          title="Experience Blueprint"
+          sub="Production systems shipped. Real teams. Measurable outcomes."
+        />
+
+        <div className="relative">
+          {/* Center spine — the pulse travels down this as you scroll */}
+          <div
+            ref={trackRef}
+            className="absolute left-1/2 top-0 bottom-0 hidden md:block"
+            style={{ width: 1, background: "rgba(255,255,255,0.14)", transform: "translateX(-0.5px)" }}
+          >
+            <div
+              ref={trailRef}
+              className="absolute"
+              style={{ left: -1, width: 3, top: 0, height: 260, transform: "translate(-1px, -100%)", filter: "blur(2px)", opacity: 0.8 }}
+            />
+            <div
+              ref={pulseRef}
+              className="absolute rounded-full"
+              style={{ left: "50%", top: 0, width: 8, height: 8, transform: "translate(-50%, -50%)" }}
+            />
+          </div>
+
+          <div className="flex flex-col gap-16 md:gap-24">
+            {PORTFOLIO_DATA.experience.map((exp, i) => {
+              const fromLeft = i % 2 === 0;
+              return (
+                <div key={exp.id} className="flex" style={{ justifyContent: fromLeft ? "flex-start" : "flex-end" }}>
+                  <div className="w-full md:w-[46%] relative">
+                    <div
+                      ref={(el) => { dotRefs.current[i] = el; }}
+                      className="hidden md:block absolute rounded-full"
+                      style={
+                        fromLeft
+                          ? { right: -66, top: 46, width: 22, height: 22, border: "1px solid rgba(255,255,255,0.25)", background: "rgba(0,0,0,0.4)", transition: "box-shadow 0.6s ease, border-color 0.6s ease, background 0.6s ease" }
+                          : { left: -66, top: 46, width: 22, height: 22, border: "1px solid rgba(255,255,255,0.25)", background: "rgba(0,0,0,0.4)", transition: "box-shadow 0.6s ease, border-color 0.6s ease, background 0.6s ease" }
+                      }
+                    />
+                    <FadeUp delay={i * 0.05}>
+                      <div className="bw-card p-7 md:p-11 cursor-default">
+                        <div className="flex flex-wrap items-start justify-between gap-4 mb-2">
+                          <h3 className="text-2xl md:text-3xl font-bold" style={{ color: "var(--text)" }}>{exp.role}</h3>
+                          <span
+                            className="text-xs px-3.5 py-1.5 rounded-full shrink-0"
+                            style={{ border: "1px solid var(--border-hover)", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}
+                          >
+                            {exp.period}
+                          </span>
+                        </div>
+                        <p className="text-base mb-6" style={{ color: "var(--text-subtle)" }}>{exp.company}</p>
+                        <ul className="space-y-3">
+                          {exp.description.map((point, j) => (
+                            <li key={j} className="flex gap-3 text-[15px] leading-relaxed" style={{ color: "var(--text-2)" }}>
+                              <span className="mt-2 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "var(--text-subtle)" }} />
+                              {point}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </FadeUp>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Education */}
+        <div className="mt-20 md:mt-28">
+          <FadeUp>
+            <p className="text-xs tracking-[0.2em] uppercase mb-8 text-center" style={{ color: "var(--text-subtle)", fontFamily: "var(--font-mono)" }}>
+              Education
+            </p>
+          </FadeUp>
+          <div className="grid sm:grid-cols-2 gap-5">
+            {PORTFOLIO_DATA.education.map((edu, i) => (
+              <FadeUp key={edu.id} delay={i * 0.1}>
+                <div className="bw-card p-6 cursor-default">
+                  <p className="text-xs tracking-widest uppercase mb-3" style={{ color: "var(--text-subtle)", fontFamily: "var(--font-mono)" }}>Education</p>
+                  <h4 className="font-semibold text-base mb-1" style={{ color: "var(--text)" }}>{edu.degree} in {edu.field}</h4>
+                  <p className="text-sm mb-1" style={{ color: "var(--text-muted)" }}>{edu.school} · {edu.location}</p>
+                  <p className="text-xs" style={{ color: "var(--text-subtle)", fontFamily: "var(--font-mono)" }}>{edu.period}</p>
+                </div>
+              </FadeUp>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────
    PAGE
    ───────────────────────────────────────────── */
 export default function HomePage() {
@@ -1059,20 +1359,20 @@ export default function HomePage() {
   const cardScale    = useSpring(cardScaleRaw, { stiffness: 70, damping: 28 });
 
   return (
-    <>
+    <ScrollFxProvider>
       <CustomCursor />
       <ScrollProgress />
+      <ScrollThread />
+      <CinematicOverlay />
 
       {/* ── HERO ─────────────────────────────────── */}
       <motion.section
+        id="hero"
         className="relative min-h-screen flex items-center px-6 pt-24 pb-16 overflow-hidden"
         style={{ opacity: heroOpacity }}
       >
         {/* Layer 0: Dot grid — barely moves, anchors the scene */}
-        <motion.div
-          className="absolute inset-0 dot-grid-bg"
-          style={{ opacity: 0.5, y: bgY }}
-        />
+        <HeroDotGrid y={bgY} />
         {/* Vignette — static overlay, always full-screen */}
         <div
           className="absolute inset-0"
@@ -1183,7 +1483,7 @@ export default function HomePage() {
               perspective on the parent creates the 3-D tilt context */}
           <div className="hidden lg:block" style={{ perspective: "1400px" }}>
             <motion.div style={{ y: cardY, rotateX: cardRX, scale: cardScale }}>
-              <HeroWorkstation scrollY={scrollY} />
+              <HeroLaptop scrollY={scrollY} />
             </motion.div>
           </div>
         </div>
@@ -1207,116 +1507,7 @@ export default function HomePage() {
       <HorizonDivider />
 
       {/* ── 03 EXPERIENCE ────────────────────────── */}
-      <Section id="experience">
-        <SectionHead
-          eyebrow="03 — Architecture"
-          title="Experience Blueprint"
-          sub="Production systems shipped. Real teams. Measurable outcomes."
-        />
-        {/* perspective here makes every child rotateY feel truly 3-D */}
-        <div className="relative" style={{ perspective: "1200px", perspectiveOrigin: "50% 30%" }}>
-          {/* Center spine — fades in/out at the ends so it never looks clipped */}
-          <div
-            className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 hidden md:block"
-            style={{
-              background: "linear-gradient(to bottom, transparent, var(--border) 6%, var(--border) 94%, transparent)",
-            }}
-          />
-
-          <div className="space-y-10 md:space-y-8">
-            {PORTFOLIO_DATA.experience.map((exp, i) => {
-              const fromLeft = i % 2 === 0;
-              /* near cards (even) sit at full size; far cards (odd) sit slightly deeper */
-              const restScale = fromLeft ? 1 : 0.985;
-              return (
-                <div key={exp.id} className="relative md:flex md:items-start">
-                  {/* Spine dot — anchored at the center line */}
-                  <div
-                    className="hidden md:block absolute left-1/2 top-8 w-3 h-3 rounded-full border-2 z-10 -translate-x-1/2"
-                    style={{ background: "var(--bg)", borderColor: "var(--text-muted)" }}
-                  />
-
-                  {/* 3D card — hinges from the spine side on enter, gentle counter-tilt on hover */}
-                  <motion.div
-                    initial={{
-                      opacity: 0,
-                      rotateY: rm ? 0 : (fromLeft ? -24 : 24),
-                      scale: rm ? 1 : 0.94,
-                    }}
-                    whileInView={{ opacity: 1, rotateY: 0, scale: restScale }}
-                    whileHover={rm ? {} : {
-                      rotateY: fromLeft ? 3.5 : -3.5,
-                      scale: restScale + 0.01,
-                      transition: { duration: 0.2, ease: "easeOut" },
-                    }}
-                    viewport={{ once: true, margin: "-60px" }}
-                    transition={{ duration: 0.78, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] }}
-                    style={{
-                      /* hinge from the spine-facing edge so the card "opens" outward */
-                      transformOrigin: fromLeft ? "right center" : "left center",
-                    }}
-                    className={[
-                      "w-full",
-                      fromLeft
-                        ? "md:w-[calc(50%-2.5rem)] md:mr-auto md:pr-10"
-                        : "md:w-[calc(50%-2.5rem)] md:ml-auto md:pl-10",
-                    ].join(" ")}
-                  >
-                    <div className="bw-card p-7 cursor-default">
-                      <div className="flex flex-wrap items-start justify-between gap-3 mb-5">
-                        <div>
-                          <h3 className="font-bold text-lg" style={{ color: "var(--text)" }}>{exp.role}</h3>
-                          <p className="text-sm font-medium" style={{ color: "var(--text-muted)" }}>{exp.company}</p>
-                        </div>
-                        <span
-                          className="text-xs px-3 py-1 rounded-full shrink-0"
-                          style={{
-                            background: "var(--bg-raised)",
-                            border: "1px solid var(--border)",
-                            color: "var(--text-subtle)",
-                            fontFamily: "var(--font-mono)",
-                          }}
-                        >
-                          {exp.period}
-                        </span>
-                      </div>
-                      <ul className="space-y-2">
-                        {exp.description.map((point, j) => (
-                          <li key={j} className="flex gap-3 text-sm" style={{ color: "var(--text-muted)" }}>
-                            <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "var(--text-subtle)" }} />
-                            {point}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </motion.div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Education */}
-        <div className="mt-16">
-          <FadeUp>
-            <p className="text-xs tracking-[0.2em] uppercase mb-8 text-center" style={{ color: "var(--text-subtle)", fontFamily: "var(--font-mono)" }}>
-              Education
-            </p>
-          </FadeUp>
-          <div className="grid sm:grid-cols-2 gap-5">
-            {PORTFOLIO_DATA.education.map((edu, i) => (
-              <FadeUp key={edu.id} delay={i * 0.1}>
-                <div className="bw-card p-6 cursor-default">
-                  <p className="text-xs tracking-widest uppercase mb-3" style={{ color: "var(--text-subtle)", fontFamily: "var(--font-mono)" }}>Education</p>
-                  <h4 className="font-semibold text-base mb-1" style={{ color: "var(--text)" }}>{edu.degree} in {edu.field}</h4>
-                  <p className="text-sm mb-1" style={{ color: "var(--text-muted)" }}>{edu.school} · {edu.location}</p>
-                  <p className="text-xs" style={{ color: "var(--text-subtle)", fontFamily: "var(--font-mono)" }}>{edu.period}</p>
-                </div>
-              </FadeUp>
-            ))}
-          </div>
-        </div>
-      </Section>
+      <ExperienceBlueprint />
 
       <HorizonDivider />
 
@@ -1398,6 +1589,6 @@ export default function HomePage() {
           </div>
         </FadeUp>
       </Section>
-    </>
+    </ScrollFxProvider>
   );
 }
