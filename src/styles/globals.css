@@ -253,9 +253,12 @@
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.22); }
 
 /* ════════════════════════════════════════════════════════════
-   CUSTOM CURSOR — hide native cursor on pointer:fine devices
+   CUSTOM CURSOR — hide native cursor on pointer:fine devices, but only
+   when the custom cursor is actually going to render in its place; users
+   with prefers-reduced-motion keep the native cursor instead of getting
+   none at all.
    ════════════════════════════════════════════════════════════ */
-@media (pointer: fine) {
+@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
   * { cursor: none !important; }
 }
 

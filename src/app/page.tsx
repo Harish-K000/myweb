@@ -1,14 +1,15 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform, useSpring, useInView, useReducedMotion, useMotionValue, useMotionValueEvent, useAnimationFrame, AnimatePresence, type MotionValue } from "framer-motion";
-import { ArrowRight, ExternalLink, Github, MapPin, Mail, Phone, Linkedin } from "lucide-react";
+import { motion, useScroll, useTransform, useSpring, useInView, useReducedMotion, useMotionValue, useMotionValueEvent, useAnimationFrame, AnimatePresence, animate, type MotionValue } from "framer-motion";
+import { ArrowRight, ExternalLink, Github, MapPin, Mail, Phone, Linkedin, ChevronDown, ChevronRight } from "lucide-react";
 import { PORTFOLIO_DATA, type ProjectItem } from "@/data/portfolio";
 import ContactForm from "@/components/ui/ContactForm";
 import MagneticWrapper from "@/components/ui/MagneticWrapper";
 import HeroLaptop from "@/components/ui/HeroLaptop";
 import ScrollThread from "@/components/ui/ScrollThread";
 import CinematicOverlay from "@/components/ui/CinematicOverlay";
+import LivingSystemBackground from "@/components/ui/LivingBlueprint";
 import { ScrollFxProvider, useScrollFx } from "@/lib/scroll-fx";
 
 /* ─────────────────────────────────────────────
@@ -216,6 +217,8 @@ function CustomCursor() {
   const x = useMotionValue(-200);
   const y = useMotionValue(-200);
   const [hovered, setHovered] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
   /* Dot follows nearly instantly */
   const dotX = useSpring(x, { stiffness: 700, damping: 42 });
@@ -241,7 +244,11 @@ function CustomCursor() {
     };
   }, [x, y, rm]);
 
-  if (rm) return null;
+  /* Wait for mount before ever rendering null for reduced-motion — the
+     server always renders the cursor (it can't know the client's motion
+     preference), so bailing out on `rm` before mount would mismatch the
+     hydrated output and force the whole tree into client-only rendering. */
+  if (mounted && rm) return null;
 
   return (
     <>
@@ -289,12 +296,69 @@ function HeroDotGrid({ y }: { y: MotionValue<number> }) {
    PINNED PROJECTS — Apple-style scroll showcase
    ───────────────────────────────────────────── */
 
-/** Right-side visual panel: metrics or tech-stack display */
+/** Projects with a bespoke recorded animation instead of the generic
+ *  metrics/tech-stack panel — keyed by portfolio.ts project id. */
+const PROJECT_VIDEOS: Record<string, { mp4: string; webm: string }> = {
+  "agentic-browser-automation": {
+    mp4: "/video/agentic-workflow.mp4",
+    webm: "/video/agentic-workflow.webm",
+  },
+  "predictive-diabetes-analytics": {
+    mp4: "/video/diabetes-workflow.mp4",
+    webm: "/video/diabetes-workflow.webm",
+  },
+  "depth-training-website": {
+    mp4: "/video/physiotherapy-workflow.mp4",
+    webm: "/video/physiotherapy-workflow.webm",
+  },
+  "patient-queue-management": {
+    mp4: "/video/patient-queue-workflow.mp4",
+    webm: "/video/patient-queue-workflow.webm",
+  },
+};
+
+/** Right-side visual panel: a recorded signature clip when one exists,
+ *  otherwise the metrics or tech-stack display. */
 function ProjectVisual({ project, index }: { project: ProjectItem; index: number }) {
+  const video = PROJECT_VIDEOS[project.id];
+
+  if (video) {
+    return (
+      <div className="bw-card relative overflow-hidden h-full">
+        <video
+          className="absolute inset-0 w-full h-full object-cover"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+        >
+          <source src={video.webm} type="video/webm" />
+          <source src={video.mp4} type="video/mp4" />
+        </video>
+        <div
+          className="absolute top-4 left-4 flex items-center gap-2 px-2.5 py-1 rounded-full"
+          style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }}
+        >
+          <span className="status-dot" />
+          <span className="text-xs" style={{ color: "var(--green)", fontFamily: "var(--font-mono)" }}>LIVE</span>
+        </div>
+        <div
+          className="absolute bottom-0 left-0 right-0 px-4 pb-3 pt-8"
+          style={{ background: "linear-gradient(to top, rgba(0,0,0,0.8), transparent)" }}
+        >
+          <p className="text-xs truncate" style={{ color: "rgba(255,255,255,0.6)", fontFamily: "var(--font-mono)" }}>
+            {project.techStack.slice(0, 3).join(" · ")}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
-      className="bw-card relative overflow-hidden"
-      style={{ padding: "2rem", aspectRatio: "4 / 5" }}
+      className="bw-card relative overflow-hidden h-full"
+      style={{ padding: "2rem" }}
     >
       {/* Faint background index number */}
       <div
@@ -354,82 +418,152 @@ function ProjectVisual({ project, index }: { project: ProjectItem; index: number
   );
 }
 
-/** Single dot in the bottom progress row */
+/** Single dot in the bottom progress row — click to jump to that project */
 function ProgressDot({
-  index,
-  total,
-  scrollProgress,
+  active,
+  onClick,
+  label,
 }: {
-  index: number;
-  total: number;
-  scrollProgress: MotionValue<number>;
+  active: boolean;
+  onClick: () => void;
+  label: string;
 }) {
-  const step = 1 / total;
-  const start = index * step;
-  const end   = (index + 1) * step;
-  const buf   = step * 0.15;
-
-  const opacity = useTransform(
-    scrollProgress,
-    [Math.max(0, start - buf), start, Math.max(start, end - buf), Math.min(1, end)],
-    [0.2, 1, 1, index === total - 1 ? 1 : 0.2]
-  );
-  const scale = useTransform(
-    scrollProgress,
-    [Math.max(0, start - buf), start, Math.max(start, end - buf), Math.min(1, end)],
-    [0.8, 1.5, 1.5, index === total - 1 ? 1.5 : 0.8]
-  );
-
   return (
-    <motion.div
-      className="rounded-full"
-      style={{ width: 6, height: 6, background: "var(--text)", opacity, scale }}
-    />
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      aria-current={active}
+      className="rounded-full cursor-pointer p-2 -m-2"
+    >
+      <motion.span
+        className="block rounded-full"
+        style={{ width: 6, height: 6, background: "var(--text)" }}
+        animate={{ opacity: active ? 1 : 0.25, scale: active ? 1.5 : 0.8 }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      />
+    </button>
   );
 }
 
-/** One project panel — fades in/out as scroll progress crosses its window */
+/** A faint, static "architecture signature" behind each project card — a
+ *  different topology archetype per project so the carousel gives each
+ *  build a bit of unique visual identity instead of an empty backdrop. */
+function projectHash(n: number) {
+  const x = Math.sin(n * 12.9898) * 43758.5453;
+  return x - Math.floor(x);
+}
+
+const TOPOLOGY_ARCHETYPES = ["flowchart", "hub", "timeline", "mesh", "grid"] as const;
+type TopologyArchetype = (typeof TOPOLOGY_ARCHETYPES)[number];
+
+function ProjectTopology({ archetype, seed }: { archetype: TopologyArchetype; seed: number }) {
+  let nodes: [number, number][] = [];
+  let edges: [number, number][] = [];
+
+  if (archetype === "flowchart") {
+    nodes = [[10, 50], [30, 28], [30, 72], [55, 50], [80, 28], [80, 72]];
+    edges = [[0, 1], [0, 2], [1, 3], [2, 3], [3, 4], [3, 5]];
+  } else if (archetype === "hub") {
+    nodes = [[50, 50]];
+    edges = [];
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2;
+      nodes.push([50 + Math.cos(a) * 36, 50 + Math.sin(a) * 36]);
+      edges.push([0, i + 1]);
+    }
+  } else if (archetype === "timeline") {
+    nodes = [[8, 50], [26, 50], [44, 50], [62, 50], [80, 50]];
+    edges = [[0, 1], [1, 2], [2, 3], [3, 4]];
+  } else if (archetype === "mesh") {
+    for (let i = 0; i < 9; i++) {
+      nodes.push([12 + projectHash(seed + i * 3.1) * 76, 12 + projectHash(seed + i * 7.7) * 76]);
+    }
+    nodes.forEach((n, i) => {
+      const dists = nodes
+        .map((m, j) => ({ j, d: i === j ? Infinity : Math.hypot(n[0] - m[0], n[1] - m[1]) }))
+        .sort((a, b) => a.d - b.d)
+        .slice(0, 2);
+      dists.forEach(({ j }) => edges.push([i, j]));
+    });
+  } else {
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 3; col++) nodes.push([22 + col * 28, 22 + row * 28]);
+    }
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 3; col++) {
+        const i = row * 3 + col;
+        if (col < 2) edges.push([i, i + 1]);
+        if (row < 2) edges.push([i, i + 3]);
+      }
+    }
+  }
+
+  return (
+    <svg
+      className="absolute inset-0 w-full h-full"
+      viewBox="0 0 100 100"
+      preserveAspectRatio="xMidYMid slice"
+      aria-hidden="true"
+    >
+      {edges.map(([a, b], i) => (
+        <line
+          key={i}
+          x1={nodes[a][0]} y1={nodes[a][1]} x2={nodes[b][0]} y2={nodes[b][1]}
+          stroke="rgba(255,255,255,0.08)"
+          strokeWidth="0.15"
+          vectorEffect="non-scaling-stroke"
+        />
+      ))}
+      {nodes.map(([x, y], i) => (
+        <circle key={i} cx={x} cy={y} r={i === 0 && archetype === "hub" ? 0.7 : 0.45} fill="rgba(255,255,255,0.06)" />
+      ))}
+    </svg>
+  );
+}
+
+/** One project panel — the single active slide in the auto-advancing carousel */
 function ProjectSlide({
   project,
   index,
   total,
-  scrollProgress,
+  allProjects,
+  onAdvance,
+  onJump,
 }: {
   project: ProjectItem;
   index: number;
   total: number;
-  scrollProgress: MotionValue<number>;
+  allProjects: ProjectItem[];
+  onAdvance: () => void;
+  onJump: (i: number) => void;
 }) {
-  const rm   = !!useReducedMotion();
-  const step = 1 / total;
-  const start = index * step;
-  const end   = (index + 1) * step;
-  const FADE  = step * 0.22;
+  const rm = !!useReducedMotion();
+  const archetype = TOPOLOGY_ARCHETYPES[index % TOPOLOGY_ARCHETYPES.length];
+  const hasVideo = !!PROJECT_VIDEOS[project.id];
 
-  const opacity = useTransform(
-    scrollProgress,
-    [
-      index === 0 ? 0 : Math.max(0, start - FADE),
-      start,
-      Math.min(1 - FADE * 0.5, end - FADE),
-      index === total - 1 ? 1 : Math.min(1, end),
-    ],
-    [index === 0 ? 1 : 0, 1, 1, index === total - 1 ? 1 : 0]
-  );
-  const y = useTransform(
-    scrollProgress,
-    [Math.max(0, start - FADE), start],
-    rm ? [0, 0] : [55, 0]
-  );
+  const peeks: number[] = [];
+  for (let k = 1; k <= 2 && peeks.length < 2; k++) {
+    const candidate = (index + k) % total;
+    if (candidate !== index && !peeks.includes(candidate)) peeks.push(candidate);
+  }
 
   return (
     <motion.div
-      className="absolute inset-0 flex items-center"
-      style={{ opacity, y }}
+      className="absolute inset-0 flex items-center cursor-pointer"
+      initial={rm ? { opacity: 0 } : { opacity: 0, y: 28 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={rm ? { opacity: 0 } : { opacity: 0, y: -16 }}
+      transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+      onClick={(e) => {
+        if ((e.target as HTMLElement).closest("a, button")) return;
+        onAdvance();
+      }}
     >
-      <div className="max-w-7xl mx-auto w-full px-6 grid lg:grid-cols-5 gap-10 lg:gap-16 items-center">
+      <ProjectTopology archetype={archetype} seed={index * 41.3} />
+      <div className="relative z-10 max-w-7xl mx-auto w-full px-6 grid lg:grid-cols-5 gap-10 lg:gap-16 items-start">
         {/* Left: copy */}
-        <div className="lg:col-span-3 flex flex-col gap-6">
+        <div className={hasVideo ? "lg:col-span-2 flex flex-col gap-6" : "lg:col-span-3 flex flex-col gap-6"}>
           <p
             className="text-xs tracking-[0.2em] uppercase"
             style={{ color: "var(--text-subtle)", fontFamily: "var(--font-mono)" }}
@@ -511,58 +645,153 @@ function ProjectSlide({
           </div>
         </div>
 
-        {/* Right: visual panel */}
-        <div className="hidden lg:block lg:col-span-2">
-          <ProjectVisual project={project} index={index} />
+        {/* Right: visual panel, with the next couple of projects listed
+            below it as a real, reliably-clickable stack — jump straight to
+            one instead of only being able to step forward one at a time.
+            (A version of this used transform-offset "peeking" cards layered
+            behind the visual, but most of each card's hit area ended up
+            hidden under the front one — unreliable to click. This uses
+            normal document flow instead, so the whole row is always live.) */}
+        <div className={hasVideo ? "hidden lg:flex lg:col-span-3 flex-col gap-3" : "hidden lg:flex lg:col-span-2 flex-col gap-3"}>
+          {/* Height is capped (not aspect-ratio-derived) so the card plus
+              the peek rows below it can never exceed the fixed h-screen
+              carousel and get clipped on shorter viewports. */}
+          <div style={{ height: hasVideo ? "clamp(280px, 44vh, 460px)" : "clamp(320px, 46vh, 460px)" }}>
+            <ProjectVisual project={project} index={index} />
+          </div>
+          {peeks.map((peekIdx, i) => {
+            const peekProject = allProjects[peekIdx];
+            return (
+              <button
+                key={peekProject.id}
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onJump(peekIdx); }}
+                aria-label={`Jump to project ${peekIdx + 1}: ${peekProject.title}`}
+                className="flex items-center gap-3 text-left cursor-pointer rounded-xl px-4 py-3 transition-colors duration-200"
+                style={{
+                  background: i === 0 ? "var(--bg-raised)" : "var(--bg-surface)",
+                  border: `1px solid ${i === 0 ? "var(--border-hover)" : "var(--border)"}`,
+                }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "var(--border-hover)"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = i === 0 ? "var(--border-hover)" : "var(--border)"; }}
+              >
+                <span className="text-[10px] tracking-widest shrink-0" style={{ color: "var(--text-subtle)", fontFamily: "var(--font-mono)" }}>
+                  {String(peekIdx + 1).padStart(2, "0")}
+                </span>
+                <span className="text-sm font-medium truncate" style={{ color: "var(--text-muted)" }}>
+                  {peekProject.title}
+                </span>
+                <ChevronRight size={14} className="ml-auto shrink-0" style={{ color: "var(--text-subtle)" }} />
+              </button>
+            );
+          })}
         </div>
       </div>
     </motion.div>
   );
 }
 
-/** Outer container that drives the sticky scroll — height = N viewports */
+/** Auto-advancing project carousel — one viewport tall, no scroll-jacking. */
 function PinnedProjects() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const rm = !!useReducedMotion();
+  const inView = useInView(sectionRef, { once: true, amount: 0.5 });
   const projects = PORTFOLIO_DATA.projects;
   const N = projects.length;
 
+  const [index, setIndex] = useState(0);
+  const [autoplay, setAutoplay] = useState(true);
+  const [hovered, setHovered] = useState(false);
+  const [everReachedEnd, setEverReachedEnd] = useState(false);
+
+  useEffect(() => {
+    if (!inView || !autoplay || rm || hovered || index >= N - 1) return;
+    const timer = setTimeout(() => setIndex((i) => Math.min(i + 1, N - 1)), 4200);
+    return () => clearTimeout(timer);
+  }, [inView, autoplay, rm, hovered, index, N]);
+
+  useEffect(() => {
+    if (index === N - 1) setEverReachedEnd(true);
+  }, [index, N]);
+
+  const goTo = (i: number) => {
+    setAutoplay(false);
+    setIndex(Math.max(0, Math.min(N - 1, i)));
+  };
+
+  /* Clicking the slide advances forward, wrapping back to the first
+     project once you're past the last — so tapping never dead-ends. */
+  const advance = () => {
+    setAutoplay(false);
+    setIndex((i) => (i + 1) % N);
+  };
+
+  const sequenceDone = rm ? inView : everReachedEnd;
+
   return (
-    <div ref={containerRef} style={{ height: `${N * 100}vh` }}>
-      <div className="sticky top-0 h-screen overflow-hidden">
-        {/* Top label bar */}
-        <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-6 pt-6 z-10">
-          <p className="text-xs tracking-[0.2em] uppercase" style={{ color: "var(--text-subtle)", fontFamily: "var(--font-mono)" }}>
-            05 — Projects
-          </p>
-          <p className="text-xs" style={{ color: "var(--text-subtle)", fontFamily: "var(--font-mono)" }}>
-            Recent Builds
-          </p>
-        </div>
-
-        {/* Stacked slides — each fades in/out over its scroll window */}
-        <div className="absolute inset-0">
-          {projects.map((proj, i) => (
-            <ProjectSlide
-              key={proj.id}
-              project={proj}
-              index={i}
-              total={N}
-              scrollProgress={scrollYProgress}
-            />
-          ))}
-        </div>
-
-        {/* Bottom progress dots */}
-        <div className="absolute bottom-6 left-0 right-0 flex justify-center items-center gap-2.5">
-          {projects.map((_, i) => (
-            <ProgressDot key={i} index={i} total={N} scrollProgress={scrollYProgress} />
-          ))}
-        </div>
+    <div
+      id="projects"
+      ref={sectionRef}
+      className="relative h-screen overflow-hidden"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Recent projects"
+    >
+      {/* Top label bar */}
+      <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-6 pt-6 z-10">
+        <p className="text-xs tracking-[0.2em] uppercase" style={{ color: "var(--text-subtle)", fontFamily: "var(--font-mono)" }}>
+          05 — Projects
+        </p>
+        <p className="text-xs" style={{ color: "var(--text-subtle)", fontFamily: "var(--font-mono)" }}>
+          Recent Builds
+        </p>
       </div>
+
+      {/* Active slide — click anywhere on it (except a link or the peeking
+          stack cards) to advance; no prev/next buttons needed. Crossfade
+          (not mode="wait") so a direct jump feels instant instead of
+          waiting through a full exit before the new project appears. */}
+      <div className="absolute inset-0">
+        <AnimatePresence>
+          <ProjectSlide
+            key={projects[index].id}
+            project={projects[index]}
+            index={index}
+            total={N}
+            allProjects={projects}
+            onAdvance={advance}
+            onJump={goTo}
+          />
+        </AnimatePresence>
+      </div>
+
+      {/* Bottom progress dots */}
+      <div className="absolute bottom-24 left-0 right-0 flex justify-center items-center gap-2.5 z-10">
+        {projects.map((proj, i) => (
+          <ProgressDot key={proj.id} active={i === index} onClick={() => goTo(i)} label={`Go to project ${i + 1}: ${proj.title}`} />
+        ))}
+      </div>
+
+      {/* Scroll cue — appears once the carousel has settled on the last project */}
+      <motion.div
+        initial={{ opacity: 0, y: -6 }}
+        animate={sequenceDone ? { opacity: 1, y: 0 } : { opacity: 0, y: -6 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 z-10"
+        aria-hidden="true"
+      >
+        <span className="text-xs tracking-widest uppercase" style={{ color: "var(--text-subtle)", fontFamily: "var(--font-mono)" }}>
+          Scroll to continue
+        </span>
+        <motion.div
+          animate={rm || !sequenceDone ? {} : { y: [0, 6, 0] }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <ChevronDown size={16} style={{ color: "var(--text-subtle)" }} />
+        </motion.div>
+      </motion.div>
     </div>
   );
 }
@@ -599,7 +828,7 @@ function HorizonDivider() {
    ───────────────────────────────────────────── */
 
 const ARCH_MODULES = [
-  { label: "FRONTEND",       tech: "React · TypeScript", top: "18%", left: "50%" },
+  { label: "FRONTEND",       tech: "React · TypeScript", top: "max(18%, 190px)", left: "50%" },
   { label: "API",            tech: "Spring Boot · REST",  top: "50%", left: "18%" },
   { label: "DATA",           tech: "PostgreSQL · Redis",  top: "50%", left: "82%" },
   { label: "INFRASTRUCTURE", tech: "Docker · CI/CD",      top: "75%", left: "33%" },
@@ -621,13 +850,35 @@ const STAGE_COPY = [
 function ArchitectureStage() {
   const ref = useRef<HTMLDivElement>(null);
   const rm  = !!useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const inView = useInView(ref, { once: true, amount: 0.5 });
+
+  /* Auto-play clock: 0 → 1 over a fixed duration once the section is in
+     view, replacing the old scroll-jacked 500vh drive. Everything below
+     still reads off this single progress value, unchanged. */
+  const progress = useMotionValue(0);
+  const [sequenceDone, setSequenceDone] = useState(false);
+
+  useEffect(() => {
+    if (!inView) return;
+    if (rm) {
+      progress.set(1);
+      setSequenceDone(true);
+      return;
+    }
+    const controls = animate(progress, 1, {
+      duration: 6.5,
+      ease: "linear",
+      onComplete: () => setSequenceDone(true),
+    });
+    return () => controls.stop();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inView, rm]);
 
   const [stageIdx, setStageIdx] = useState(0);
   const [status,   setStatus]   = useState("INITIALIZING");
   const [active,   setActive]   = useState<Set<number>>(new Set());
 
-  useMotionValueEvent(scrollYProgress, "change", (v) => {
+  useMotionValueEvent(progress, "change", (v) => {
     setStageIdx(v < 0.28 ? 0 : v < 0.56 ? 1 : v < 0.80 ? 2 : 3);
     setStatus(
       v >= 0.94 ? "PRODUCTION READY" :
@@ -644,52 +895,52 @@ function ArchitectureStage() {
     setActive(a);
   });
 
-  const coreOp  = useTransform(scrollYProgress, [0.04, 0.15], [0, 1]);
-  const coreScl = useTransform(scrollYProgress, [0.04, 0.15], rm ? [1, 1] : [0.86, 1]);
+  const coreOp  = useTransform(progress, [0.04, 0.15], [0, 1]);
+  const coreScl = useTransform(progress, [0.04, 0.15], rm ? [1, 1] : [0.86, 1]);
 
   const MR = [
     [0.10, 0.22], [0.16, 0.28], [0.22, 0.34], [0.28, 0.40], [0.34, 0.46],
   ];
-  const m0Op = useTransform(scrollYProgress, MR[0], [0, 1]);
-  const m1Op = useTransform(scrollYProgress, MR[1], [0, 1]);
-  const m2Op = useTransform(scrollYProgress, MR[2], [0, 1]);
-  const m3Op = useTransform(scrollYProgress, MR[3], [0, 1]);
-  const m4Op = useTransform(scrollYProgress, MR[4], [0, 1]);
+  const m0Op = useTransform(progress, MR[0], [0, 1]);
+  const m1Op = useTransform(progress, MR[1], [0, 1]);
+  const m2Op = useTransform(progress, MR[2], [0, 1]);
+  const m3Op = useTransform(progress, MR[3], [0, 1]);
+  const m4Op = useTransform(progress, MR[4], [0, 1]);
   const mOps = [m0Op, m1Op, m2Op, m3Op, m4Op];
 
-  const m0Z  = useTransform(scrollYProgress, MR[0], rm ? [0, 0] : [-80, 0]);
-  const m1Z  = useTransform(scrollYProgress, MR[1], rm ? [0, 0] : [-80, 0]);
-  const m2Z  = useTransform(scrollYProgress, MR[2], rm ? [0, 0] : [-80, 0]);
-  const m3Z  = useTransform(scrollYProgress, MR[3], rm ? [0, 0] : [-80, 0]);
-  const m4Z  = useTransform(scrollYProgress, MR[4], rm ? [0, 0] : [-80, 0]);
+  const m0Z  = useTransform(progress, MR[0], rm ? [0, 0] : [-80, 0]);
+  const m1Z  = useTransform(progress, MR[1], rm ? [0, 0] : [-80, 0]);
+  const m2Z  = useTransform(progress, MR[2], rm ? [0, 0] : [-80, 0]);
+  const m3Z  = useTransform(progress, MR[3], rm ? [0, 0] : [-80, 0]);
+  const m4Z  = useTransform(progress, MR[4], rm ? [0, 0] : [-80, 0]);
   const mZs  = [m0Z, m1Z, m2Z, m3Z, m4Z];
 
-  const m0Rx = useTransform(scrollYProgress, MR[0], rm ? [0, 0] : [8, 0]);
-  const m1Rx = useTransform(scrollYProgress, MR[1], rm ? [0, 0] : [8, 0]);
-  const m2Rx = useTransform(scrollYProgress, MR[2], rm ? [0, 0] : [8, 0]);
-  const m3Rx = useTransform(scrollYProgress, MR[3], rm ? [0, 0] : [8, 0]);
-  const m4Rx = useTransform(scrollYProgress, MR[4], rm ? [0, 0] : [8, 0]);
+  const m0Rx = useTransform(progress, MR[0], rm ? [0, 0] : [8, 0]);
+  const m1Rx = useTransform(progress, MR[1], rm ? [0, 0] : [8, 0]);
+  const m2Rx = useTransform(progress, MR[2], rm ? [0, 0] : [8, 0]);
+  const m3Rx = useTransform(progress, MR[3], rm ? [0, 0] : [8, 0]);
+  const m4Rx = useTransform(progress, MR[4], rm ? [0, 0] : [8, 0]);
   const mRxs = [m0Rx, m1Rx, m2Rx, m3Rx, m4Rx];
 
   const LR = [
     [0.28, 0.38], [0.34, 0.44], [0.40, 0.50], [0.44, 0.54], [0.48, 0.58],
   ];
-  const l0 = useTransform(scrollYProgress, LR[0], rm ? [0, 0] : [SVG_LENS[0], 0]);
-  const l1 = useTransform(scrollYProgress, LR[1], rm ? [0, 0] : [SVG_LENS[1], 0]);
-  const l2 = useTransform(scrollYProgress, LR[2], rm ? [0, 0] : [SVG_LENS[2], 0]);
-  const l3 = useTransform(scrollYProgress, LR[3], rm ? [0, 0] : [SVG_LENS[3], 0]);
-  const l4 = useTransform(scrollYProgress, LR[4], rm ? [0, 0] : [SVG_LENS[4], 0]);
+  const l0 = useTransform(progress, LR[0], rm ? [0, 0] : [SVG_LENS[0], 0]);
+  const l1 = useTransform(progress, LR[1], rm ? [0, 0] : [SVG_LENS[1], 0]);
+  const l2 = useTransform(progress, LR[2], rm ? [0, 0] : [SVG_LENS[2], 0]);
+  const l3 = useTransform(progress, LR[3], rm ? [0, 0] : [SVG_LENS[3], 0]);
+  const l4 = useTransform(progress, LR[4], rm ? [0, 0] : [SVG_LENS[4], 0]);
   const lOffs = [l0, l1, l2, l3, l4];
 
-  const metOp = useTransform(scrollYProgress, [0.90, 0.96], [0, 1]);
-  const metY  = useTransform(scrollYProgress, [0.90, 0.96], rm ? [0, 0] : [18, 0]);
+  const metOp = useTransform(progress, [0.90, 0.96], [0, 1]);
+  const metY  = useTransform(progress, [0.90, 0.96], rm ? [0, 0] : [18, 0]);
 
   const isProd = status === "PRODUCTION READY" || status === "SYSTEM ONLINE";
 
   return (
-    <div id="architecture" ref={ref} style={{ height: "500vh", background: "var(--bg)" }}>
+    <div id="architecture" ref={ref} className="relative">
       <div
-        className="sticky top-0 h-screen overflow-hidden"
+        className="relative h-screen overflow-hidden"
         style={{ perspective: "1200px", perspectiveOrigin: "50% 50%" }}
       >
         {/* Top label */}
@@ -725,7 +976,7 @@ function ArchitectureStage() {
             <g key={i}>
               <line
                 x1={50} y1={50} x2={nx} y2={ny}
-                stroke="rgba(255,255,255,0.06)"
+                stroke="rgba(255,255,255,0.1)"
                 strokeWidth="0.2"
                 vectorEffect="non-scaling-stroke"
               />
@@ -841,7 +1092,7 @@ function ArchitectureStage() {
         ))}
 
         {/* Stage narrative */}
-        <div className="absolute bottom-14 left-0 right-0 text-center px-6 z-10">
+        <div className="absolute bottom-24 left-0 right-0 text-center px-6 z-10">
           <AnimatePresence mode="wait">
             <motion.div
               key={stageIdx}
@@ -876,6 +1127,26 @@ function ArchitectureStage() {
               <p className="text-xs" style={{ color: "var(--text-subtle)", fontFamily: "var(--font-mono)" }}>{l}</p>
             </div>
           ))}
+        </motion.div>
+
+        {/* Scroll cue — appears once the auto-play sequence finishes,
+            telling the visitor how to move on instead of forcing more scroll. */}
+        <motion.div
+          initial={{ opacity: 0, y: -6 }}
+          animate={sequenceDone ? { opacity: 1, y: 0 } : { opacity: 0, y: -6 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 z-10"
+          aria-hidden="true"
+        >
+          <span className="text-xs tracking-widest uppercase" style={{ color: "var(--text-subtle)", fontFamily: "var(--font-mono)" }}>
+            Scroll to continue
+          </span>
+          <motion.div
+            animate={rm || !sequenceDone ? {} : { y: [0, 6, 0] }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <ChevronDown size={16} style={{ color: "var(--text-subtle)" }} />
+          </motion.div>
         </motion.div>
       </div>
     </div>
@@ -1197,7 +1468,7 @@ function ExperienceBlueprint() {
       id="experience"
       ref={sectionRef}
       className="relative py-28 px-6"
-      style={{ background: "var(--bg)", overflow: "hidden" }}
+      style={{ overflow: "hidden" }}
     >
       {/* Sticky background: drifting glows + lattice canvas */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -1256,6 +1527,7 @@ function ExperienceBlueprint() {
           <div className="flex flex-col gap-16 md:gap-24">
             {PORTFOLIO_DATA.experience.map((exp, i) => {
               const fromLeft = i % 2 === 0;
+              const year = exp.period.match(/\d{4}/)?.[0] ?? "";
               return (
                 <div key={exp.id} className="flex" style={{ justifyContent: fromLeft ? "flex-start" : "flex-end" }}>
                   <div className="w-full md:w-[46%] relative">
@@ -1268,6 +1540,27 @@ function ExperienceBlueprint() {
                           : { left: -66, top: 46, width: 22, height: 22, border: "1px solid rgba(255,255,255,0.25)", background: "rgba(0,0,0,0.4)", transition: "box-shadow 0.6s ease, border-color 0.6s ease, background 0.6s ease" }
                       }
                     />
+                    {/* Year marker — sits directly above the spine dot, in its
+                        same 22px column, so it can't collide with the card
+                        on the opposite side at narrower breakpoints. */}
+                    {year && (
+                      <div
+                        className="hidden md:block text-center"
+                        style={{
+                          position: "absolute",
+                          ...(fromLeft ? { right: -66 } : { left: -66 }),
+                          top: 14,
+                          width: 22,
+                        }}
+                      >
+                        <span
+                          className="text-[9px] tracking-tighter"
+                          style={{ color: "var(--text-subtle)", fontFamily: "var(--font-mono)", opacity: 0.65 }}
+                        >
+                          {year}
+                        </span>
+                      </div>
+                    )}
                     <FadeUp delay={i * 0.05}>
                       <div className="bw-card p-7 md:p-11 cursor-default">
                         <div className="flex flex-wrap items-start justify-between gap-4 mb-2">
@@ -1360,6 +1653,7 @@ export default function HomePage() {
 
   return (
     <ScrollFxProvider>
+      <LivingSystemBackground />
       <CustomCursor />
       <ScrollProgress />
       <ScrollThread />
@@ -1511,15 +1805,13 @@ export default function HomePage() {
 
       <HorizonDivider />
 
-      {/* ── 05 PROJECTS — scroll-pinned showcase ── */}
-      <section id="projects">
-        <PinnedProjects />
-      </section>
+      {/* ── 05 PROJECTS — auto-advancing carousel ── */}
+      <PinnedProjects />
 
       <HorizonDivider />
 
       {/* ── 06 CONTACT ───────────────────────────── */}
-      <Section id="contact" style={{ background: "var(--bg-surface)" }}>
+      <Section id="contact">
         <SectionHead
           eyebrow="06 — Contact"
           title="Let's Build Together"

@@ -1,36 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useEffect } from "react";
 import { motion, useMotionValueEvent, useReducedMotion, useTransform } from "framer-motion";
-import { useScrollFx } from "@/lib/scroll-fx";
-
-function smoothstep(a: number, b: number, x: number) {
-  const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
-  return t * t * (3 - 2 * t);
-}
+import { useScrollFx, sectionColor } from "@/lib/scroll-fx";
 
 /**
- * Color of the thread across the whole page — the same research → build →
- * ship language used in the Experience section, extended with a "signal"
- * white at the very end where the story lands on Contact.
+ * Color of the thread across the whole page, interpolated between the
+ * measured start-fraction of each section so it always lines up with where
+ * that section actually is, regardless of how long any one section is.
  */
-function threadColor(p: number) {
-  const idea = 1 - smoothstep(0, 0.3, p);
-  const build = Math.max(0, 1 - Math.abs(p - 0.42) / 0.22);
-  const ship = Math.max(0, 1 - Math.abs(p - 0.68) / 0.2);
-  const signal = smoothstep(0.86, 1, p);
-  const blue = [110, 160, 235];
-  const amber = [205, 160, 90];
-  const green = [95, 175, 130];
-  const white = [235, 240, 248];
-  const graphite = [170, 175, 182];
-  const wSum = idea + build + ship + signal;
-  const base = Math.max(0, 1 - wSum);
-  let r = graphite[0] * base, g = graphite[1] * base, b = graphite[2] * base;
-  r += blue[0] * idea + amber[0] * build + green[0] * ship + white[0] * signal;
-  g += blue[1] * idea + amber[1] * build + green[1] * ship + white[1] * signal;
-  b += blue[2] * idea + amber[2] * build + green[2] * ship + white[2] * signal;
-  return `${r | 0}, ${g | 0}, ${b | 0}`;
+function threadColor(p: number, fractions: number[]) {
+  const [r, g, b] = sectionColor(p, fractions);
+  return `${r}, ${g}, ${b}`;
 }
 
 const CHAPTERS = [
@@ -48,33 +29,19 @@ const CHAPTERS = [
  */
 export default function ScrollThread() {
   const rm = !!useReducedMotion();
-  const { progress, speed } = useScrollFx();
+  const { progress, speed, sectionFractions: fractions } = useScrollFx();
   const pulseRef = useRef<HTMLDivElement>(null);
   const trailRef = useRef<HTMLDivElement>(null);
   const dotRefs = useRef<(HTMLDivElement | null)[]>([]);
   const labelRefs = useRef<(HTMLSpanElement | null)[]>([]);
-  const fractionsRef = useRef<number[]>(CHAPTERS.map(() => 0));
-  const [fractions, setFractions] = useState<number[]>(() => CHAPTERS.map(() => 0));
+  const fractionsRef = useRef<number[]>(fractions);
 
   useEffect(() => {
-    const measure = () => {
-      const docH = document.documentElement.scrollHeight - window.innerHeight;
-      if (docH <= 0) return;
-      const next = CHAPTERS.map(({ id }) => {
-        const el = document.getElementById(id);
-        if (!el) return 0;
-        return Math.max(0, Math.min(1, el.offsetTop / docH));
-      });
-      fractionsRef.current = next;
-      setFractions(next);
-    };
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, []);
+    fractionsRef.current = fractions;
+  }, [fractions]);
 
   useMotionValueEvent(progress, "change", (p) => {
-    const rgb = threadColor(p);
+    const rgb = threadColor(p, fractionsRef.current);
     if (pulseRef.current) {
       pulseRef.current.style.top = `${p * 100}%`;
       pulseRef.current.style.background = `rgb(${rgb})`;
