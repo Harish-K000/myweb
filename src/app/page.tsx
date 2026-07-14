@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import Link from "next/link";
 import { motion, useScroll, useTransform, useSpring, useInView, useReducedMotion, useMotionValue, useMotionValueEvent, useAnimationFrame, AnimatePresence, animate, type MotionValue } from "framer-motion";
-import { ArrowRight, ExternalLink, Github, MapPin, Mail, Phone, Linkedin, ChevronDown, ChevronRight } from "lucide-react";
+import { ArrowRight, ExternalLink, Github, MapPin, Mail, Phone, Linkedin, ChevronDown, ChevronRight, ChevronLeft, Pause, Play } from "lucide-react";
 import { PORTFOLIO_DATA, type ProjectItem } from "@/data/portfolio";
 import ContactForm from "@/components/ui/ContactForm";
 import MagneticWrapper from "@/components/ui/MagneticWrapper";
@@ -331,6 +332,36 @@ function ProjectVisual({ project, index }: { project: ProjectItem; index: number
 }
 
 /** Single dot in the bottom progress row — click to jump to that project */
+/** Small circular icon button for carousel transport controls
+ *  (Prev / Play-Pause / Next) — matches the header's icon-button style. */
+function TransportButton({
+  onClick,
+  label,
+  children,
+}: {
+  onClick: () => void;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      className="w-9 h-9 shrink-0 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-200"
+      style={{
+        background: "var(--bg-surface)",
+        border: "1px solid var(--border)",
+        color: "var(--text-muted)",
+      }}
+      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--text)"; }}
+      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--text-muted)"; }}
+    >
+      {children}
+    </button>
+  );
+}
+
 function ProgressDot({
   active,
   onClick,
@@ -527,7 +558,15 @@ function ProjectSlide({
             ))}
           </div>
 
-          <div className="flex gap-5">
+          <div className="flex flex-wrap items-center gap-5">
+            <Link
+              href={`/projects/${project.id}`}
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center gap-1.5 text-sm font-semibold transition-colors duration-200"
+              style={{ color: "var(--text)" }}
+            >
+              View case study <ArrowRight size={14} />
+            </Link>
             {project.repoUrl && (
               <a
                 href={project.repoUrl}
@@ -612,33 +651,75 @@ function PinnedProjects() {
   const N = projects.length;
 
   const [index, setIndex] = useState(0);
-  const [autoplay, setAutoplay] = useState(true);
+  const [playing, setPlaying] = useState(true);
   const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
   const [everReachedEnd, setEverReachedEnd] = useState(false);
 
+  const autoAdvanceActive = inView && playing && !hovered && !focused && !rm && index < N - 1;
+
   useEffect(() => {
-    if (!inView || !autoplay || rm || hovered || index >= N - 1) return;
+    if (!autoAdvanceActive) return;
     const timer = setTimeout(() => setIndex((i) => Math.min(i + 1, N - 1)), 4200);
     return () => clearTimeout(timer);
-  }, [inView, autoplay, rm, hovered, index, N]);
+  }, [autoAdvanceActive, index, N]);
 
   useEffect(() => {
     if (index === N - 1) setEverReachedEnd(true);
   }, [index, N]);
 
   const goTo = (i: number) => {
-    setAutoplay(false);
+    setPlaying(false);
     setIndex(Math.max(0, Math.min(N - 1, i)));
   };
 
-  /* Clicking the slide advances forward, wrapping back to the first
-     project once you're past the last — so tapping never dead-ends. */
+  /* Clicking the slide, or the Next control, advances forward, wrapping
+     back to the first project once you're past the last — so navigating
+     never dead-ends. */
   const advance = () => {
-    setAutoplay(false);
+    setPlaying(false);
     setIndex((i) => (i + 1) % N);
   };
 
+  const retreat = () => {
+    setPlaying(false);
+    setIndex((i) => (i - 1 + N) % N);
+  };
+
+  /* Resuming from the last slide has nowhere to auto-advance to, so the
+     Play control would otherwise flip to "Pause" while nothing actually
+     plays — restart from the first slide instead. */
+  const togglePlaying = () => {
+    const nextPlaying = !playing;
+    if (nextPlaying && index === N - 1) setIndex(0);
+    setPlaying(nextPlaying);
+  };
+
   const sequenceDone = rm ? inView : everReachedEnd;
+
+  /* Swipe support — manual touch tracking (rather than framer-motion's
+     drag) so it doesn't fight the slide's own enter/exit transform.
+     Ignores mostly-vertical gestures so page scroll still works. */
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const onTouchStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    touchStart.current = { x: t.clientX, y: t.clientY };
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    const start = touchStart.current;
+    touchStart.current = null;
+    if (!start) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - start.x;
+    const dy = t.clientY - start.y;
+    if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy)) return;
+    if (dx < 0) advance(); else retreat();
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowRight") { e.preventDefault(); advance(); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); retreat(); }
+  };
 
   return (
     <div
@@ -647,6 +728,11 @@ function PinnedProjects() {
       className="relative h-screen overflow-hidden"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onFocusCapture={() => setFocused(true)}
+      onBlurCapture={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocused(false);
+      }}
+      onKeyDown={onKeyDown}
       role="region"
       aria-roledescription="carousel"
       aria-label="Recent projects"
@@ -662,10 +748,15 @@ function PinnedProjects() {
       </div>
 
       {/* Active slide — click anywhere on it (except a link or the peeking
-          stack cards) to advance; no prev/next buttons needed. Crossfade
-          (not mode="wait") so a direct jump feels instant instead of
-          waiting through a full exit before the new project appears. */}
-      <div className="absolute inset-0">
+          stack cards) to advance; Prev/Next/swipe/arrow-keys below cover
+          keyboard and touch users. Crossfade (not mode="wait") so a direct
+          jump feels instant instead of waiting through a full exit before
+          the new project appears. */}
+      <div
+        className="absolute inset-0"
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      >
         <AnimatePresence>
           <ProjectSlide
             key={projects[index].id}
@@ -679,11 +770,26 @@ function PinnedProjects() {
         </AnimatePresence>
       </div>
 
-      {/* Bottom progress dots */}
-      <div className="absolute bottom-24 left-0 right-0 flex justify-center items-center gap-2.5 z-10">
-        {projects.map((proj, i) => (
-          <ProgressDot key={proj.id} active={i === index} onClick={() => goTo(i)} label={`Go to project ${i + 1}: ${proj.title}`} />
-        ))}
+      {/* Bottom transport row — Prev / Play-Pause / progress dots / Next.
+          Kept on one row so it costs no extra vertical space on short
+          mobile viewports. */}
+      <div className="absolute bottom-24 left-0 right-0 flex justify-center items-center gap-3 z-10 px-6">
+        <TransportButton onClick={retreat} label="Previous project">
+          <ChevronLeft size={16} />
+        </TransportButton>
+        {!rm && (
+          <TransportButton onClick={togglePlaying} label={playing ? "Pause autoplay" : "Play autoplay"}>
+            {playing ? <Pause size={14} /> : <Play size={14} />}
+          </TransportButton>
+        )}
+        <div className="flex items-center gap-2.5">
+          {projects.map((proj, i) => (
+            <ProgressDot key={proj.id} active={i === index} onClick={() => goTo(i)} label={`Go to project ${i + 1}: ${proj.title}`} />
+          ))}
+        </div>
+        <TransportButton onClick={advance} label="Next project">
+          <ChevronRight size={16} />
+        </TransportButton>
       </div>
 
       {/* Scroll cue — appears once the carousel has settled on the last project */}
