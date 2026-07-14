@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio
 
-## Getting Started
+Personal portfolio built with Next.js (App Router), TypeScript, Tailwind CSS and Framer Motion. Monochrome, system-blueprint visual language with a scroll-driven hero and an auto-playing project carousel.
 
-First, run the development server:
+## Structure
+
+- `/` — hero, experience timeline, architecture stage, project carousel, contact
+- `/projects/[slug]` — individual case study pages
+- `/about`, `/resume`, `/contact` — supporting pages
+- `/api/contact` — contact form submission handler (Resend)
+
+Project content lives in `src/data/portfolio.ts`. Project showcase videos live in `public/video/`; their unconverted source PNG sequences (not shipped to the deployed build) live in `assets/project-sequences/`.
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The contact form (`/api/contact`) sends mail via [Resend](https://resend.com). Set these in `.env.local`:
 
-## Learn More
+```bash
+RESEND_API_KEY=
+CONTACT_TO_EMAIL=
+CONTACT_FROM_EMAIL=
+NEXT_PUBLIC_SITE_URL=  # optional, defaults to http://localhost:3000
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run dev     # start the dev server
+npm run build   # production build
+npm run start   # serve the production build
+npm run lint    # eslint
+```

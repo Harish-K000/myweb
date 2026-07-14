@@ -90,7 +90,7 @@ export default function CitySkyline({ className = "" }: { className?: string }) 
             {/* Background layer — dot grid + ambient glow */}
             <motion.div
                 className="absolute inset-0 dot-grid-bg opacity-30"
-                style={{ x: bgX, y: combine(bgY, bgYM), scale: bgScale }}
+                style={{ x: bgX, y: useCombine(bgY, bgYM), scale: bgScale }}
             />
 
             {/* Glow layer */}
@@ -110,7 +110,7 @@ export default function CitySkyline({ className = "" }: { className?: string }) 
             {/* Midground layer — building silhouettes */}
             <motion.div
                 className="absolute inset-x-0 bottom-0 flex items-end justify-end gap-2 pr-[6%]"
-                style={{ x: midX, y: combine(midY, midYM), scale: midScale }}
+                style={{ x: midX, y: useCombine(midY, midYM), scale: midScale }}
                 aria-hidden="true"
             >
                 {BUILDINGS.map((b, i) => (
@@ -129,7 +129,7 @@ export default function CitySkyline({ className = "" }: { className?: string }) 
             {/* Main object layer — lit windows over the same silhouette positions */}
             <motion.div
                 className="absolute inset-x-0 bottom-0 flex items-end justify-end gap-2 pr-[6%]"
-                style={{ x: objX, y: combine(objY, objYM), rotate: objRotate }}
+                style={{ x: objX, y: useCombine(objY, objYM), rotate: objRotate }}
                 aria-hidden="true"
             >
                 {BUILDINGS.map((b, i) => (
@@ -160,7 +160,7 @@ export default function CitySkyline({ className = "" }: { className?: string }) 
             </motion.div>
 
             {/* Foreground layer — floating accent chips */}
-            <motion.div className="absolute inset-0" style={{ x: fgX, y: combine(fgY, fgYM) }} aria-hidden="true">
+            <motion.div className="absolute inset-0" style={{ x: fgX, y: useCombine(fgY, fgYM) }} aria-hidden="true">
                 {FOREGROUND_CHIPS.map((c, i) => (
                     <span
                         key={i}
@@ -183,6 +183,6 @@ export default function CitySkyline({ className = "" }: { className?: string }) 
     );
 }
 
-function combine(a: MotionValue<number>, b: MotionValue<number>) {
+function useCombine(a: MotionValue<number>, b: MotionValue<number>) {
     return useTransform([a, b], (values: number[]) => values[0] + values[1]);
 }

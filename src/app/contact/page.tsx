@@ -74,7 +74,7 @@ export default function ContactPage() {
                 <div className="space-y-6">
                     <FadeIn delay={0.1}>
                         <div className="space-y-4">
-                            {contactChannels.map((ch, i) => {
+                            {contactChannels.map((ch) => {
                                 const Icon = ch.icon;
                                 return (
                                     <a

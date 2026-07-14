@@ -115,99 +115,6 @@ function ScrollProgress() {
 }
 
 /* ─────────────────────────────────────────────
-   COUNT-UP
-   ───────────────────────────────────────────── */
-function CountUp({ to, suffix = "" }: { to: number; suffix?: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true });
-  const [value, setValue] = useState(0);
-
-  useEffect(() => {
-    if (!inView) return;
-    let start: number | null = null;
-    const duration = 1600;
-    const step = (ts: number) => {
-      if (!start) start = ts;
-      const p = Math.min((ts - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - p, 3);
-      setValue(Math.round(eased * to));
-      if (p < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }, [inView, to]);
-
-  return <span ref={ref}>{value}{suffix}</span>;
-}
-
-/* ─────────────────────────────────────────────
-   STAT ORB
-   Mouse-tracking tilt + Z-depth pop-in entrance.
-   ───────────────────────────────────────────── */
-function StatOrb({
-  value, suffix, label, delay = 0,
-}: { value: number; suffix: string; label: string; delay?: number }) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const rm = !!useReducedMotion();
-
-  /* Normalised cursor position within the card (-0.5 → 0.5) */
-  const mX = useMotionValue(0);
-  const mY = useMotionValue(0);
-
-  /* Map cursor position → tilt angles */
-  const rotX = useTransform(mY, [-0.5, 0.5], [10, -10]);
-  const rotY = useTransform(mX, [-0.5, 0.5], [-10, 10]);
-  const rotXS = useSpring(rotX, { stiffness: 240, damping: 22 });
-  const rotYS = useSpring(rotY, { stiffness: 240, damping: 22 });
-
-  function onMouseMove(e: React.MouseEvent<HTMLDivElement>) {
-    if (!cardRef.current || rm) return;
-    const { left, top, width, height } = cardRef.current.getBoundingClientRect();
-    mX.set((e.clientX - left - width  / 2) / width);
-    mY.set((e.clientY - top  - height / 2) / height);
-  }
-
-  function onMouseLeave() { mX.set(0); mY.set(0); }
-
-  return (
-    <motion.div
-      ref={cardRef}
-      onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
-      className="bw-card relative overflow-hidden p-6 text-center cursor-default"
-      style={{
-        transformStyle: "preserve-3d",
-        rotateX: rm ? 0 : rotXS,
-        rotateY: rm ? 0 : rotYS,
-      }}
-      initial={rm
-        ? { opacity: 0 }
-        : { opacity: 0, scale: 0.72, z: -120 }}
-      whileInView={{ opacity: 1, scale: 1, z: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.68, delay, ease: [0.22, 1, 0.36, 1] }}
-    >
-      {/* Sphere-surface highlight — radial glow at top-left simulates curvature */}
-      <div
-        className="absolute inset-0 pointer-events-none rounded-[inherit]"
-        style={{
-          background:
-            "radial-gradient(ellipse 65% 55% at 28% 22%, rgba(255,255,255,0.07) 0%, transparent 70%)",
-        }}
-      />
-      <p className="relative text-4xl font-bold mb-2" style={{ color: "var(--text)" }}>
-        <CountUp to={value} suffix={suffix} />
-      </p>
-      <p
-        className="relative text-xs uppercase tracking-widest"
-        style={{ color: "var(--text-subtle)", fontFamily: "var(--font-mono)" }}
-      >
-        {label}
-      </p>
-    </motion.div>
-  );
-}
-
-/* ─────────────────────────────────────────────
    CUSTOM CURSOR
    Dot (tight spring) + ring (loose spring).
    Only on pointer:fine devices; respects reduced-motion.
@@ -315,6 +222,10 @@ const PROJECT_VIDEOS: Record<string, { mp4: string; webm: string }> = {
     mp4: "/video/patient-queue-workflow.mp4",
     webm: "/video/patient-queue-workflow.webm",
   },
+  "translate-ease": {
+    mp4: "/video/translate-workflow.mp4",
+    webm: "/video/translate-workflow.webm",
+  },
 };
 
 /** Right-side visual panel: a recorded signature clip when one exists,
@@ -326,11 +237,12 @@ function ProjectVisual({ project, index }: { project: ProjectItem; index: number
     return (
       <div className="bw-card relative overflow-hidden h-full">
         <video
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
           autoPlay
           loop
           muted
           playsInline
+          disablePictureInPicture
           preload="metadata"
         >
           <source src={video.webm} type="video/webm" />

@@ -171,7 +171,7 @@ export const PORTFOLIO_DATA = {
             solution: "Built a guided translation flow with glossary memory and real-time reviewer feedback.",
             techStack: ["Next.js", "Node.js", "TypeScript", "PostgreSQL", "Redis"],
             metrics: ["95% translation consistency", "30% faster review cycles"],
-            repoUrl: "https://github.com",
+            repoUrl: "https://github.com/Harish-K000/TranslateEase",
         },
         {
             id: "fmasac-research",

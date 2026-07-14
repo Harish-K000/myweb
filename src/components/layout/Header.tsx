@@ -9,7 +9,7 @@ import MagneticWrapper from "@/components/ui/MagneticWrapper";
 
 const NAV_LINKS = [
   { name: "Experience", href: "/#experience" },
-  { name: "Projects",   href: "/#projects" },
+  { name: "Projects",   href: "/projects" },
   { name: "Contact",    href: "/#contact" },
 ];
 
